@@ -9,7 +9,12 @@ install-anaconda:
 	pip install epc
 
 install-dependencies:
-	sudo apt-get install build-essential texinfo libx11-dev libxpm-dev libjpeg-dev libpng-dev libgif-dev libtiff-dev libgtk2.0-dev libncurses-dev libtinfo-dev 
+	sudo apt-get install build-essential texinfo libx11-dev libxpm-dev libjpeg-dev libpng-dev libgif-dev libtiff-dev libgtk2.0-dev libncurses-dev libtinfo-dev mailutils libgnutls28-dev
+	sudo add-apt-repository ppa:git-core/ppa
+	sudo apt-get update
+	sudo apt-get install git
+	apt-get install magit
+	apt-get install cscope
 
 install-emacs: install-dependencies
 	wget -O - "${EMACS_URL}" | tar -xz 

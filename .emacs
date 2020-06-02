@@ -4,16 +4,14 @@
 
 (add-to-list 'package-archives
 	     '("melpa" . "http://melpa.milkbox.net/packages/"))
-
 (package-refresh-contents)
-
 (defun install-if-needed (package)
   (unless (package-installed-p package)
     (package-install package)))
 
-;; make more packages available with the package installer
+; make more packages available with the package installer
 (setq to-install
-      '(python-mode magit yasnippet jedi auto-complete autopair find-file-in-repository flycheck xcscope ecb color-theme fit-frame linum-relative epc virtualenv exec-path-from-shell pydoc anaconda-mode ein))
+      '(python-mode magit yasnippet jedi auto-complete autopair find-file-in-repository flycheck xcscope ecb linum-relative epc virtualenv exec-path-from-shell pydoc anaconda-mode ein))
 
 (mapc 'install-if-needed to-install)
 
@@ -32,7 +30,6 @@
         (setq outline-regexp "def\\|class ")
         (setenv "LANG" "en_GB.UTF-8"))) ; <-- *this* line is new
 
-
 (menu-bar-mode 0)
 (tool-bar-mode 0)
 ;(line-number-mode 1)
@@ -40,9 +37,26 @@
 (setq scroll-conservatively 3)
 (global-font-lock-mode t) ;always hightlight source code
 (blink-cursor-mode -1) ; make cursor not blink
-(setq-default indent-tabs-mode nil); user 8 spaces instead of 1 tab
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(ecb-options-version "2.50")
+ '(indent-line-function (quote insert-tab) t)
+ '(indent-tabs-mode t)
+ '(package-selected-packages
+   (quote
+    (bitbake color-theme-modern ein anaconda-mode pydoc exec-path-from-shell virtualenv linum-relative yasnippet xcscope python-mode magit jedi flycheck find-file-in-repository ecb autopair)))
+ '(tab-width 8))
+(add-hook 'text-mode-hook
+      (lambda() (setq indent-line-function 'insert-tab)))
 (setq c-basic-offset 8)
-(setq term-buffer-maximumsize 0)
+
+;(setq-default indent-tabs-mode nil); user 8 spaces instead of 1 tab
+;(setq c-basic-offset 9)
+;(setq term-buffer-maximumsize 0)
 
 ;;Key settings
 (global-unset-key "\C-w")
@@ -125,8 +139,10 @@
 (define-key global-map (kbd "C-w n s") 'cscope-next-symbol)
 (define-key global-map (kbd "C-w p s") 'cscope-prev-symbol)
 (define-key global-map [f1] 'cscope-select-entry-one-window)
-(define-key global-map [f2] 'cscope-select-entry-other-window)
-(define-key global-map [f3] 'cscope-find-this-symbol)
+(define-key global-map [f2] 'cscope-find-this-symbol)
+(define-key global-map [f3] 'cscope-find-functions-calling-this-function)
+;(define-key global-map [f2] 'cscope-select-entry-other-window)
+;(define-key global-map [f3] 'cscope-find-this-symbol)
 (define-key global-map [f4] 'cscope-set-initial-directory)
 (define-key global-map "\C-]" 'cscope-find-global-definition)
 (define-key global-map "\C-t" 'cscope-pop-mark)
@@ -158,14 +174,29 @@
 (define-key global-map [f5] 'doxymacs-insert-file-comment)
 (define-key global-map [f6] 'doxymacs-insert-function-comment)
 (define-key global-map [f7] 'doxymacs-insert-blank-multiline-comment)
-(define-key global-map [f8] 'comment-or-uncomment-region)
+;(define-key global-map [f8] 'comment-or-uncomment-region)
+(define-key global-map [f8] 'whitespace-cleanup)
+
 
 ;;magit
 
 (define-key global-map [f9] 'magit-status)
-(define-key global-map [f10] 'magit-branch-manager)
+(define-key global-map [f10] 'magit-show-refs)
 (define-key global-map [f11] 'magit-log)
-(define-key global-map [f12] 'magit-add-remote)
+(define-key global-map [f12] 'magit-remote-config-popup)
+
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(magit-diff-added ((((type tty)) (:foreground "green"))))
+ '(magit-diff-added-highlight ((((type tty)) (:foreground "LimeGreen"))))
+ '(magit-diff-context-highlight ((((type tty)) (:foreground "default"))))
+ '(magit-diff-file-heading ((((type tty)) nil)))
+ '(magit-diff-removed ((((type tty)) (:foreground "red"))))
+ '(magit-diff-removed-highlight ((((type tty)) (:foreground "IndianRed"))))
+ '(magit-section-highlight ((((type tty)) nil))))
 
 ;; show magit-status in current window 
 ;;(setq magit-status-buffer-switch-function 'switch-to-buffer)
@@ -200,15 +231,18 @@
 (add-hook 'c-mode-common-hook 'hide-ifdef-mode)                
 
 ;; require packages & settings
-(setq color-theme-is-global t)
-(color-theme-initialize)
+;;(setq color-theme-is-global t)
+
 ;;(color-theme-goldenrod)
 ;;(color-theme-dark-blue2)
-(color-theme-gray30)
+;;(color-theme-gray30)
+
+;;(color-theme-modern
+(load-theme 'goldenrod t t)
+(enable-theme 'goldenrod)
 
 (require 'xcscope)
 (require 'ecb)
-(require 'fit-frame)
 (require 'linum-relative)
 
 ;; source contol settings
@@ -305,6 +339,8 @@
 (setq visible-bell nil)
 
 ;;
-(setq magit-last-seen-setup-instructions "1.4.0")
+;(setq magit-last-seen-setup-instructions "1.4.0")
+
+
 
 
