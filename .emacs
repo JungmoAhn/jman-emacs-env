@@ -11,7 +11,7 @@
 
 ; make more packages available with the package installer
 (setq to-install
-      '(python-mode magit yasnippet jedi auto-complete autopair find-file-in-repository flycheck xcscope ecb linum-relative epc virtualenv exec-path-from-shell pydoc anaconda-mode ein))
+      '(python-mode magit yasnippet jedi auto-complete autopair find-file-in-repository flycheck xcscope ecb linum-relative epc virtualenv exec-path-from-shell pydoc anaconda-mode ein color-theme-modern))
 
 (mapc 'install-if-needed to-install)
 
