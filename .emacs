@@ -3,7 +3,7 @@
 (package-initialize)
 
 (add-to-list 'package-archives
-	     '("melpa" . "http://melpa.milkbox.net/packages/"))
+	     '("melpa" . "http://melpa.org/packages/"))
 (package-refresh-contents)
 (defun install-if-needed (package)
   (unless (package-installed-p package)
