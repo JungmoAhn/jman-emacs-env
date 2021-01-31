@@ -15,6 +15,8 @@ install-dependencies:
 	sudo apt-get install git
 	apt-get install magit
 	apt-get install cscope
+	sudo apt-get install clangd-9
+	pip3 install python-language-server[all]
 
 install-emacs: install-dependencies
 	wget -O - "${EMACS_URL}" | tar -xz 

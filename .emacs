@@ -1,20 +1,3 @@
-;; emacs package settings
-(require 'package)
-(package-initialize)
-
-(add-to-list 'package-archives
-	     '("melpa" . "http://melpa.org/packages/"))
-(package-refresh-contents)
-(defun install-if-needed (package)
-  (unless (package-installed-p package)
-    (package-install package)))
-
-; make more packages available with the package installer
-(setq to-install
-      '(python-mode magit yasnippet jedi auto-complete autopair find-file-in-repository flycheck xcscope ecb linum-relative epc virtualenv exec-path-from-shell pydoc anaconda-mode ein color-theme-modern))
-
-(mapc 'install-if-needed to-install)
-
 ;; mac settings
 (setq mac-option-modifier 'meta)
 (setq mac-command-modifier 'meta)
@@ -22,14 +5,7 @@
 (when (memq window-system '(mac ns))
   (exec-path-from-shell-initialize))
 
-(add-hook 'python-mode-hook
-  (lambda ()
-        (set (make-variable-buffer-local 'beginning-of-defun-function)
-             'py-beginning-of-def-or-class)
-        (define-key py-mode-map "\C-c\C-z" 'py-shell)
-        (setq outline-regexp "def\\|class ")
-        (setenv "LANG" "en_GB.UTF-8"))) ; <-- *this* line is new
-
+;; UI settings
 (menu-bar-mode 0)
 (tool-bar-mode 0)
 ;(line-number-mode 1)
@@ -38,17 +14,41 @@
 (global-font-lock-mode t) ;always hightlight source code
 (blink-cursor-mode -1) ; make cursor not blink
 
+;;; emacs package settings
+(require 'package)
+(package-initialize)
+(add-to-list 'package-archives
+	     '("melpa" . "http://melpa.org/packages/"))
+(package-refresh-contents)
+(defun install-if-needed (package)
+  (unless (package-installed-p package)
+    (package-install package)))
+; make more packages available with the package installer
+(setq to-install
+      '(python-mode magit linum-relative epc virtualenv exec-path-from-shell pydoc anaconda-mode color-theme-modern lsp-mode yasnippet lsp-treemacs helm-lsp lsp-mode yasnippet lsp-treemacs helm-lsp projectile hydra flycheck company company-box  avy which-key helm-xref dap-mode package lsp-ivy counsel-projectile lsp-ui helm-cscope lsp-python-ms lsp-jedi))
+
+(setq byte-compile-warnings '(cl-functions))
+
+(when (cl-find-if-not #'package-installed-p package-selected-packages)
+  (package-refresh-contents)
+  (mapc #'package-install package-selected-packages))
+
+(mapc 'install-if-needed to-install)
+(require 'package)
+(package-initialize)
+(package-refresh-contents)
+(package-install 'use-package)
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(ecb-options-version "2.50")
- '(indent-line-function (quote insert-tab) t)
+ '(indent-line-function 'insert-tab t)
  '(indent-tabs-mode t)
  '(package-selected-packages
-   (quote
-    (bitbake color-theme-modern ein anaconda-mode pydoc exec-path-from-shell virtualenv linum-relative yasnippet xcscope python-mode magit jedi flycheck find-file-in-repository ecb autopair)))
+   '(elpy bitbake color-theme-modern ein anaconda-mode pydoc exec-path-from-shell virtualenv linum-relative yasnippet helm-cscope python-mode magit jedi flycheck find-file-in-repository ecb autopair))
  '(tab-width 8))
 (add-hook 'text-mode-hook
       (lambda() (setq indent-line-function 'insert-tab)))
@@ -119,33 +119,16 @@
  (current-buffer)))
 
 (define-key global-map (kbd "C-w d") 'toggle-window-dedicated)
-
-;;ECB
-
-(define-key global-map (kbd "C-w 0") 'ecb-goto-window-directories)
-(define-key global-map (kbd "C-w 1") 'ecb-goto-window-sources)
-(define-key global-map (kbd "C-w 2") 'ecb-goto-window-methods)
-(define-key global-map (kbd "C-w e 1") 'ecb-goto-window-edit1)
-(define-key global-map (kbd "C-w e 2") 'ecb-goto-window-edit2)
-(define-key global-map (kbd "C-w e 3") 'ecb-goto-window-edit3)
-(define-key global-map (kbd "C-w e 4") 'ecb-goto-window-edit4)
-(define-key global-map (kbd "C-w e l") 'ecb-goto-window-edit-last)
-(define-key global-map (kbd "C-w e s") 'ecb-goto-window-edit-by-smart-selection)
-
-;;cscope
-
-(define-key global-map (kbd "C-w n f") 'cscope-next-file)
-(define-key global-map (kbd "C-w p f") 'cscope-prev-file)
-(define-key global-map (kbd "C-w n s") 'cscope-next-symbol)
-(define-key global-map (kbd "C-w p s") 'cscope-prev-symbol)
-(define-key global-map [f1] 'cscope-select-entry-one-window)
-(define-key global-map [f2] 'cscope-find-this-symbol)
-(define-key global-map [f3] 'cscope-find-functions-calling-this-function)
-;(define-key global-map [f2] 'cscope-select-entry-other-window)
-;(define-key global-map [f3] 'cscope-find-this-symbol)
-(define-key global-map [f4] 'cscope-set-initial-directory)
-(define-key global-map "\C-]" 'cscope-find-global-definition)
-(define-key global-map "\C-t" 'cscope-pop-mark)
+;(define-key global-map [f3] 'cscope-find-functions-calling-this-function)
+(define-key global-map [f1] 'treemacs-select-window)
+(define-key global-map [f2] 'lsp-ivy-global-workspace-symbol)
+(define-key global-map [f3] 'helm-cscope-find-this-symbol)
+;(define-key global-map [f4] 'cscope-find-this-symbol)
+(global-set-key [f7] 'find-file-in-repository)
+(define-key global-map "\C-]" 'helm-cscope-find-global-definition)
+(define-key global-map "\C-t" 'helm-cscope-pop-mark)
+;(define-key global-map "\C-]" 'xref-find-definitions)
+;(define-key global-map "\C-t" 'xref-find-references)
 
 ;;map key 'e' in cscope-buffer
 (defun cscope-select-entry-edit1-window ()
@@ -177,13 +160,17 @@
 ;(define-key global-map [f8] 'comment-or-uncomment-region)
 (define-key global-map [f8] 'whitespace-cleanup)
 
-
 ;;magit
 
 (define-key global-map [f9] 'magit-status)
 (define-key global-map [f10] 'magit-show-refs)
 (define-key global-map [f11] 'magit-log)
 (define-key global-map [f12] 'magit-remote-config-popup)
+
+;(define-key global-map [(meta 9)] 'windmove-up)
+;(define-key global-map [(meta 0)] 'windmove-up)
+(define-key global-map (kbd "C-9") 'magit-status)
+(define-key global-map (kbd "C-0") 'magit-show-refs)
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -201,6 +188,40 @@
 ;; show magit-status in current window 
 ;;(setq magit-status-buffer-switch-function 'switch-to-buffer)
 
+;;hideshow for programming
+(load-library "hideshow")
+(add-hook 'c-mode-common-hook 'hs-minor-mode)
+
+;;hide-ifdef
+(add-hook 'c-mode-common-hook 'hide-ifdef-mode)                
+
+;; require packages & settings
+;;(setq color-theme-is-global t)
+
+;;(color-theme-goldenrod)
+;;(color-theme-dark-blue2)
+;;(color-theme-gray30)
+
+;;(color-theme-modern
+(load-theme 'goldenrod t t)
+(enable-theme 'goldenrod)
+
+(require 'xcscope)
+;(require 'linum-relative)
+
+;; source contol settings
+(require 'magit)
+(global-set-key "\C-xg" 'magit-status)
+
+(require 'auto-complete)
+; auto-complete mode extra settings
+(setq
+ ac-auto-start 2
+ ac-override-local-map nil
+ ac-use-menu-map t
+ ac-candidate-limit 20)
+
+(require 'autopair)
 
 ;; C language settings
 (add-hook 'c-mode-common-hook
@@ -223,124 +244,81 @@
                 (setq indent-tabs-mode t)
                 (c-set-style "linux-tabs-only")))))
 
-;;hideshow for programming
-(load-library "hideshow")
-(add-hook 'c-mode-common-hook 'hs-minor-mode)
+;; LSP Settings
 
-;;hide-ifdef
-(add-hook 'c-mode-common-hook 'hide-ifdef-mode)                
+(add-hook 'c-mode-hook 'lsp)
+(add-hook 'cpp-mode-hook 'lsp)
+(add-hook 'python-mode-hook 'lsp)
 
-;; require packages & settings
-;;(setq color-theme-is-global t)
+(use-package lsp-mode
+  :config
+  (setq lsp-idle-delay 0.5
+        lsp-enable-symbol-highlighting t
+        lsp-enable-snippet nil  ;; Not supported by company capf, which is the recommended company backend
+        lsp-pyls-plugins-flake8-enabled t)
+  (lsp-register-custom-settings
+   '(("pyls.plugins.pyls_mypy.enabled" t t)
+     ("pyls.plugins.pyls_mypy.live_mode" nil t)
+     ("pyls.plugins.pyls_black.enabled" t t)
+     ("pyls.plugins.pyls_isort.enabled" t t)
 
-;;(color-theme-goldenrod)
-;;(color-theme-dark-blue2)
-;;(color-theme-gray30)
+     ;; Disable these as they're duplicated by flake8
+     ("pyls.plugins.pycodestyle.enabled" nil t)
+     ("pyls.plugins.mccabe.enabled" nil t)
+     ("pyls.plugins.pyflakes.enabled" nil t)))
+  :hook
+  ((python-mode . lsp)
+   (lsp-mode . lsp-enable-which-key-integration)))
 
-;;(color-theme-modern
-(load-theme 'goldenrod t t)
-(enable-theme 'goldenrod)
+(use-package lsp-ui
+  :config (setq lsp-ui-sideline-show-hover t
+                lsp-ui-sideline-delay 0.5
+                lsp-ui-doc-delay 5
+                lsp-ui-sideline-ignore-duplicates t
+                lsp-ui-doc-position 'bottom
+                lsp-ui-doc-alignment 'frame
+                lsp-ui-doc-header nil
+                lsp-ui-doc-include-signature t
+                lsp-ui-doc-use-childframe t)
+  :commands lsp-ui-mode
+  :bind (:map evil-normal-state-map
+              ("gd" . lsp-ui-peek-find-definitions)
+              ("gr" . lsp-ui-peek-find-references)
+              :map md/leader-map
+              ("Ni" . lsp-ui-imenu)))
 
-(require 'xcscope)
-(require 'ecb)
-(require 'linum-relative)
+(use-package pyvenv
+  :demand t
+  :config
+  (setq pyvenv-workon "emacs")  ; Default venv
+  (pyvenv-tracking-mode 1))  ; Automatically use pyvenv-workon via dir-locals
 
-;; source contol settings
-(require 'magit)
-(global-set-key "\C-xg" 'magit-status)
+(use-package projectile
+  :diminish projectile-mode
+  :config (projectile-mode)
+  :demand t
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
+  :init
+  (when (file-directory-p "~/Projects/Code")
+    (setq projectile-project-search-path '("~/Projects/Code")))
+  (setq projectile-switch-project-action #'projectile-dired))
 
-(require 'auto-complete)
-(require 'autopair)
-(require 'yasnippet)
-(require 'flycheck)
-(global-flycheck-mode t)
+(projectile-mode +1)
+(define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
+(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 
-(global-set-key [f7] 'find-file-in-repository)
+(use-package lsp-treemacs
+  :after lsp)
 
-; auto-complete mode extra settings
-(setq
- ac-auto-start 2
- ac-override-local-map nil
- ac-use-menu-map t
- ac-candidate-limit 20)
+;;(use-package counsel-projectile
+;;  :after projectile)
 
-;; ;; Python mode settings
-(require 'python-mode)
-(add-to-list 'auto-mode-alist '("\\.py$" . python-mode))
-(setq py-electric-colon-active t)
-(add-hook 'python-mode-hook 'autopair-mode)
-(add-hook 'python-mode-hook 'yas-minor-mode)
-
-(require 'pydoc)
-(defun lookup-pydoc ()
-  (interactive)
-  (let ((curpoint (point)) (prepoint) (postpoint) (cmd))
-    (save-excursion
-      (beginning-of-line)
-      (setq prepoint (buffer-substring (point) curpoint)))
-    (save-excursion
-      (end-of-line)
-      (setq postpoint (buffer-substring (point) curpoint)))
-    (if (string-match "[_a-z][_\\.0-9a-z]*$" prepoint)
-        (setq cmd (substring prepoint (match-beginning 0) (match-end 0))))
-    (if (string-match "^[_0-9a-z]*" postpoint)
-        (setq cmd (concat cmd (substring postpoint (match-beginning 0) (match-end 0)))))
-    (if (string= cmd "") nil
-      (let ((max-mini-window-height 0))
-        (shell-command (concat "pydoc " cmd))))))
-
-(add-hook 'python-mode-hook
-          (lambda ()
-            (local-set-key (kbd "C-c h") 'lookup-pydoc)))
-
-(add-hook 'python-mode-hook 'anaconda-mode)
-
-(require 'websocket)
-;; #ipython notebook
-;; M+x ein:notebooklist-open
-(require 'ein)  
-(setq ein:use-auto-complete t)
-;;(setq ein:use-smartrep t)
-
-;; ;; Jedi settings
-(require 'epc)
-(require 'virtualenv)
-(require 'jedi)
-
-;; It's also required to run "pip install --user jedi" and "pip
-;; install --user epc" to get the Python side of the library work
-;; correctly.
-;; With the same interpreter you're using.
-
-;; if you need to change your python intepreter, if you want to change it
-;;(setq jedi:server-command
-;;      '("python" "/home/andrea/.emacs.d/elpa/jedi-0.1.2/jediepcserver.py"))
-(setq jedi:setup-keys t)
-(setq jedi:server-command '("/Users/jman/.emacs.d/elpa/jedi-core-20151214.705/jediepcserver.py"))
-(setq jedi:complete-on-dot t)
-(setq jedi:server-args
-      '("--sys-path" "/Users/jman/anaconda/lib/python3.5/site-packages"))
-
-(add-hook 'python-mode-hook
-	  (lambda ()
-	    (jedi:setup)
-	    (jedi:ac-setup)
-            (local-set-key "\C-cd" 'jedi:show-doc)))
-
-(add-hook 'python-mode-hook 'auto-complete-mode)
-
-(ido-mode t)
-
-;; -------------------- extra nice things --------------------
-;; use shift to move around windows
-(windmove-default-keybindings 'shift)
-(show-paren-mode t)
- ; Turn beep off
-(setq visible-bell nil)
-
-;;
-;(setq magit-last-seen-setup-instructions "1.4.0")
-
-
-
-
+;(dw/leader-key-def
+;  "pf"  'counsel-projectile-find-file
+;  "ps"  'counsel-projectile-switch-project
+;  "pF"  'counsel-projectile-rg
+;  ;; "pF"  'consult-ripgrep
+;  "pp"  'counsel-projectile
+;  "pc"  'projectile-compile-project
+;  "pd"  'projectile-dired)
