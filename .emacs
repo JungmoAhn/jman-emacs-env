@@ -25,7 +25,7 @@
     (package-install package)))
 ; make more packages available with the package installer
 (setq to-install
-      '(python-mode magit linum-relative epc virtualenv exec-path-from-shell pydoc anaconda-mode color-theme-modern lsp-mode yasnippet lsp-treemacs helm-lsp lsp-mode yasnippet lsp-treemacs helm-lsp projectile hydra flycheck company company-box  avy which-key helm-xref dap-mode package lsp-ivy counsel-projectile lsp-ui helm-cscope lsp-python-ms lsp-jedi))
+      '(python-mode magit linum-relative epc virtualenv exec-path-from-shell pydoc anaconda-mode color-theme-modern lsp-mode yasnippet lsp-treemacs helm-lsp lsp-mode yasnippet lsp-treemacs helm-lsp projectile hydra flycheck company company-box  avy which-key helm-xref dap-mode package lsp-ivy counsel-projectile lsp-ui helm-cscope lsp-python-ms pyvenv))
 
 (setq byte-compile-warnings '(cl-functions))
 
@@ -45,10 +45,11 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(ecb-options-version "2.50")
- '(indent-line-function 'insert-tab t)
+ '(indent-line-function (quote insert-tab) t)
  '(indent-tabs-mode t)
  '(package-selected-packages
-   '(elpy bitbake color-theme-modern ein anaconda-mode pydoc exec-path-from-shell virtualenv linum-relative yasnippet helm-cscope python-mode magit jedi flycheck find-file-in-repository ecb autopair))
+   (quote
+    (elpy bitbake color-theme-modern ein anaconda-mode pydoc exec-path-from-shell virtualenv linum-relative yasnippet helm-cscope python-mode magit jedi flycheck find-file-in-repository ecb autopair)))
  '(tab-width 8))
 (add-hook 'text-mode-hook
       (lambda() (setq indent-line-function 'insert-tab)))
@@ -308,6 +309,8 @@
 (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
 (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 
+(use-package lsp-ivy)
+(ivy-mode 1)
 (use-package lsp-treemacs
   :after lsp)
 
