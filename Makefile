@@ -25,6 +25,7 @@ install-emacs: install-dependencies
 	./configure; \
 	make; \
 	sudo make install;
+	cp .emacs ~/
 
 install-packages:
 	cp .emacs ~/
