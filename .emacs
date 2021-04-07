@@ -25,7 +25,7 @@
     (package-install package)))
 ; make more packages available with the package installer
 (setq to-install
-      '(python-mode magit linum-relative epc virtualenv exec-path-from-shell pydoc anaconda-mode color-theme-modern lsp-mode yasnippet lsp-treemacs helm-lsp lsp-mode yasnippet lsp-treemacs helm-lsp projectile hydra flycheck company company-box  avy which-key helm-xref dap-mode package lsp-ivy counsel-projectile lsp-ui helm-cscope lsp-python-ms pyvenv))
+      '(python-mode magit linum-relative epc virtualenv exec-path-from-shell pydoc anaconda-mode color-theme-modern lsp-mode yasnippet lsp-treemacs helm-lsp lsp-mode yasnippet lsp-treemacs helm-lsp projectile hydra flycheck company company-box  avy which-key helm-xref dap-mode package lsp-ivy counsel-projectile lsp-ui helm-cscope lsp-python-ms pyvenv cc-mode))
 
 (setq byte-compile-warnings '(cl-functions))
 
@@ -122,10 +122,15 @@
 (define-key global-map (kbd "C-w d") 'toggle-window-dedicated)
 ;(define-key global-map [f3] 'cscope-find-functions-calling-this-function)
 (define-key global-map [f1] 'treemacs-select-window)
-(define-key global-map [f2] 'lsp-ivy-global-workspace-symbol)
+(define-key global-map [f2] 'treemacs-add-project-to-workspace)
 (define-key global-map [f3] 'helm-cscope-find-this-symbol)
+(define-key global-map [f4] 'lsp-ivy-global-workspace-symbol)
+(global-set-key [f6] 'find-file-in-repository)
+(define-key global-map [f7] 'grep-find)
+(define-key global-map [f8] 'eshell)
+(define-key global-map [f12] 'whitespace-cleanup)
 ;(define-key global-map [f4] 'cscope-find-this-symbol)
-(global-set-key [f7] 'find-file-in-repository)
+
 (define-key global-map "\C-]" 'helm-cscope-find-global-definition)
 (define-key global-map "\C-t" 'helm-cscope-pop-mark)
 ;(define-key global-map "\C-]" 'xref-find-definitions)
@@ -155,18 +160,17 @@
 
 ;;commenting with DOXYMACS
 
-(define-key global-map [f5] 'doxymacs-insert-file-comment)
-(define-key global-map [f6] 'doxymacs-insert-function-comment)
-(define-key global-map [f7] 'doxymacs-insert-blank-multiline-comment)
+;(define-key global-map [f5] 'doxymacs-insert-file-comment)
+;(define-key global-map [f6] 'doxymacs-insert-function-comment)
+;(define-key global-map [f7] 'doxymacs-insert-blank-multiline-comment)
 ;(define-key global-map [f8] 'comment-or-uncomment-region)
-(define-key global-map [f8] 'whitespace-cleanup)
 
 ;;magit
 
 (define-key global-map [f9] 'magit-status)
 (define-key global-map [f10] 'magit-show-refs)
 (define-key global-map [f11] 'magit-log)
-(define-key global-map [f12] 'magit-remote-config-popup)
+;(define-key global-map [f12] 'magit-remote-config-popup)
 
 ;(define-key global-map [(meta 9)] 'windmove-up)
 ;(define-key global-map [(meta 0)] 'windmove-up)
