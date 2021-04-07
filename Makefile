@@ -16,6 +16,7 @@ install-dependencies:
 	apt-get install magit
 	apt-get install cscope
 	sudo apt-get install clangd-9
+	sudo apt-get install python3-pip
 	pip3 install python-language-server[all]
 
 install-emacs: install-dependencies
