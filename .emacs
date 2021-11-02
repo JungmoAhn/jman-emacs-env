@@ -243,6 +243,7 @@
 (add-hook 'c-mode-hook 'lsp)
 (add-hook 'cpp-mode-hook 'lsp)
 (add-hook 'python-mode-hook 'lsp)
+(add-hook 'java-mode-hook 'lsp)
 
 (use-package lsp-mode
   :config
