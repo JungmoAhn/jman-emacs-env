@@ -18,6 +18,9 @@ install-dependencies:
 	sudo apt-get install clangd-9
 	sudo apt-get install python3-pip
 	pip3 install python-language-server[all]
+	sudo apt-get install openjdk-11-jdk
+	echo "export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64" >> ~/.bashrc
+	echo "export PATH="$PATH:$JAVA_HOME/bin” >> ~/.bashrc
 
 install-emacs: install-dependencies
 	wget -O - "${EMACS_URL}" | tar -xz 

@@ -13,31 +13,7 @@
 (setq scroll-conservatively 3)
 (global-font-lock-mode t) ;always hightlight source code
 (blink-cursor-mode -1) ; make cursor not blink
-
-;;; emacs package settings
-(require 'package)
-(package-initialize)
-(add-to-list 'package-archives
-	     '("melpa" . "http://melpa.org/packages/"))
-(package-refresh-contents)
-(defun install-if-needed (package)
-  (unless (package-installed-p package)
-    (package-install package)))
-; make more packages available with the package installer
-(setq to-install
-      '(python-mode magit linum-relative epc virtualenv exec-path-from-shell pydoc anaconda-mode color-theme-modern lsp-mode yasnippet lsp-treemacs helm-lsp lsp-mode yasnippet lsp-treemacs helm-lsp projectile hydra flycheck company company-box  avy which-key helm-xref dap-mode package lsp-ivy counsel-projectile lsp-ui helm-cscope lsp-python-ms pyvenv cc-mode gnu-elpa-keyring-update))
-
 (setq byte-compile-warnings '(cl-functions))
-
-(when (cl-find-if-not #'package-installed-p package-selected-packages)
-  (package-refresh-contents)
-  (mapc #'package-install package-selected-packages))
-
-(mapc 'install-if-needed to-install)
-(require 'package)
-(package-initialize)
-(package-refresh-contents)
-(package-install 'use-package)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -48,11 +24,32 @@
  '(indent-line-function 'insert-tab t)
  '(indent-tabs-mode t)
  '(package-selected-packages
-   '(elpy bitbake color-theme-modern ein anaconda-mode pydoc exec-path-from-shell virtualenv linum-relative yasnippet helm-cscope python-mode magit jedi flycheck find-file-in-repository ecb))
+   '(pyvenv lsp-ui lsp-ivy helm-lsp lsp-java which-key company hydra lsp-mode projectile helm-xref xcscope elpy bitbake color-theme-modern ein anaconda-mode pydoc exec-path-from-shell virtualenv linum-relative yasnippet helm-cscope python-mode magit jedi flycheck find-file-in-repository ecb))
  '(tab-width 8))
 (add-hook 'text-mode-hook
       (lambda() (setq indent-line-function 'insert-tab)))
 (setq c-basic-offset 8)
+
+;; C language settings
+(add-hook 'c-mode-common-hook
+          (lambda ()
+            ;; Add kernel style
+            (c-add-style
+             "linux-tabs-only"
+             '("linux" (c-offsets-alist
+                        (arglist-cont-nonempty
+                         c-lineup-gcc-asm-reg
+                         c-lineup-arglist-tabs-only))))))
+
+(add-hook 'c-mode-hook
+          (lambda ()
+            (let ((filename (buffer-file-name)))
+              ;; Enable kernel mode for the appropriate files
+              (when (and filename
+                         (string-match (expand-file-name "~/src/linux-trees")
+                                       filename))
+                (setq indent-tabs-mode t)
+                (c-set-style "linux-tabs-only")))))
 
 ;(setq-default indent-tabs-mode nil); user 8 spaces instead of 1 tab
 ;(setq c-basic-offset 9)
@@ -60,7 +57,7 @@
 
 ;;Key settings
 (global-unset-key "\C-w")
-(define-key global-map (kbd "C-w r") 'windresize)
+;(define-key global-map (kbd "C-w r") 'windresize)
 (define-key global-map [(meta l)] 'buffer-menu)
 (define-key global-map (kbd "RET") 'newline-and-indent)
 (define-key global-map (kbd "C-`") 'delete-backward-char)
@@ -74,12 +71,30 @@
 (define-key global-map (kbd "C-w h l") 'turn-off-line-numbers-display)
 
 ;; hiding & showing code
-(define-key global-map (kbd "C-w h i a") 'hide-ifdefs)
-(define-key global-map (kbd "C-w s i a") 'show-ifdefs)
-(define-key global-map (kbd "C-w h i b") 'hide-ifdef-block)
-(define-key global-map (kbd "C-w s i b") 'show-ifdef-block)
-(define-key global-map (kbd "C-w h b") 'hs-hide-block)
-(define-key global-map (kbd "C-w s b") 'hs-show-block)
+;(define-key global-map (kbd "C-w h i a") 'hide-ifdefs)
+;(define-key global-map (kbd "C-w s i a") 'show-ifdefs)
+;(define-key global-map (kbd "C-w h i b") 'hide-ifdef-block)
+;(define-key global-map (kbd "C-w s i b") 'show-ifdef-block)
+;(define-key global-map (kbd "C-w h b") 'hs-hide-block)
+;(define-key global-map (kbd "C-w s b") 'hs-show-block)
+
+
+(define-key global-map (kbd "C-w s e") 'treemacs-select-window)
+(define-key global-map (kbd "C-w s w") 'treemacs-switch-workspace)
+(define-key global-map (kbd "C-w c w") 'treemacs-create-workspace)
+(define-key global-map (kbd "C-w r w") 'treemacs-remove-workspace)
+(define-key global-map (kbd "C-w c p") 'treemacs-peek)
+(define-key global-map (kbd "C-w a p") 'treemacs-add-project-to-workspace)
+(define-key global-map (kbd "C-w r p") 'treemacs-remove-project-from-workspace)
+(define-key global-map (kbd "C-w n p") 'treemacs-next-project)
+(define-key global-map (kbd "C-w p p") 'treemacs-previous-project)
+
+(define-key global-map (kbd "C-w R p") 'projectil-remove-known-project)
+(define-key global-map (kbd "C-w S p") 'counsel-projectile-switch-project)
+
+; manage a  current workspace
+(define-key global-map (kbd "C-w a f") 'lsp-workspace-folders-add)
+(define-key global-map (kbd "C-w r f") 'lsp-workspace-folders-remove)
 
 ;; moving cursor
 
@@ -120,10 +135,14 @@
 
 (define-key global-map (kbd "C-w d") 'toggle-window-dedicated)
 ;(define-key global-map [f3] 'cscope-find-functions-calling-this-function)
-(define-key global-map [f1] 'treemacs-select-window)
-(define-key global-map [f2] 'treemacs-add-project-to-workspace)
+
+
+(define-key global-map [f1] 'lsp-ui-peek-find-definitions)
+(define-key global-map [f2] 'lsp-ui-peek-find-references)
 (define-key global-map [f3] 'helm-cscope-find-this-symbol)
-(define-key global-map [f4] 'lsp-ivy-global-workspace-symbol)
+;(define-key global-map [f4] 'lsp-ivy-global-workspace-symbol)
+(define-key global-map [f4] 'treemacs-edit-workspaces)
+(define-key global-map [f5] 'lsp-describe-session)
 (global-set-key [f6] 'find-file-in-repository)
 (define-key global-map [f7] 'grep-find)
 (define-key global-map [f8] 'eshell)
@@ -132,8 +151,6 @@
 
 (define-key global-map "\C-]" 'helm-cscope-find-global-definition)
 (define-key global-map "\C-t" 'helm-cscope-pop-mark)
-;(define-key global-map "\C-]" 'xref-find-definitions)
-;(define-key global-map "\C-t" 'xref-find-references)
 
 ;;map key 'e' in cscope-buffer
 (defun cscope-select-entry-edit1-window ()
@@ -189,6 +206,23 @@
  '(magit-diff-removed-highlight ((((type tty)) (:foreground "IndianRed"))))
  '(magit-section-highlight ((((type tty)) nil))))
 
+
+(condition-case nil
+    (require 'use-package)
+  (file-error
+   (require 'package)
+   (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
+   (package-initialize)
+   (package-refresh-contents)
+   (package-install 'use-package)
+   (setq use-package-always-ensure t)
+   (require 'use-package)))
+
+(package-install 'use-package)
+(package-install 'dash)
+					;      '(python-mode magit linum-relative epc virtualenv exec-path-from-shell pydoc anaconda-mode color-theme-modern lsp-mode yasnippet lsp-treemacs helm-lsp lsp-mode yasnippet lsp-treemacs helm-lsp projectile hydra flycheck company company-box  avy which-key helm-xref dap-mode package lsp-ivy counsel-projectile lsp-ui helm-cscope lsp-python-ms pyvenv cc-mode gnu-elpa-keyring-update lsp-java))
+
+
 ;; show magit-status in current window 
 ;;(setq magit-status-buffer-switch-function 'switch-to-buffer)
 
@@ -197,24 +231,19 @@
 (add-hook 'c-mode-common-hook 'hs-minor-mode)
 
 ;;hide-ifdef
-(add-hook 'c-mode-common-hook 'hide-ifdef-mode)                
+(add-hook 'c-mode-common-hook 'hide-ifdef-mode)
 
-;; require packages & settings
-;;(setq color-theme-is-global t)
-
-;;(color-theme-goldenrod)
-;;(color-theme-dark-blue2)
-;;(color-theme-gray30)
-
-;;(color-theme-modern
+(use-package color-theme-modern)
 (load-theme 'goldenrod t t)
 (enable-theme 'goldenrod)
 
-(require 'xcscope)
+(use-package xcscope)
+(use-package helm-xref)
+(use-package helm-cscope)
 ;(require 'linum-relative)
 
 ;; source contol settings
-(require 'magit)
+(use-package magit)
 (global-set-key "\C-xg" 'magit-status)
 
 ;; C language settings
@@ -238,12 +267,36 @@
                 (setq indent-tabs-mode t)
                 (c-set-style "linux-tabs-only")))))
 
+
 ;; LSP Settings
+
 
 (add-hook 'c-mode-hook 'lsp)
 (add-hook 'cpp-mode-hook 'lsp)
 (add-hook 'python-mode-hook 'lsp)
 (add-hook 'java-mode-hook 'lsp)
+(add-hook 'java-mode-hook 'flycheck-mode)
+(add-hook 'java-mode-hook 'company-mode)
+
+(use-package projectile)
+(use-package flycheck)
+(use-package yasnippet :config (yas-global-mode))
+(use-package lsp-mode :hook ((lsp-mode . lsp-enable-which-key-integration))
+  :config (setq lsp-completion-enable-additional-text-edit nil))
+(use-package hydra)
+(use-package company)
+(add-hook 'after-init-hook 'global-company-mode)
+(use-package which-key :config (which-key-mode))
+(use-package lsp-java :config (add-hook 'java-mode-hook 'lsp))
+(use-package dap-mode :after lsp-mode :config (dap-auto-configure-mode))
+(use-package dap-java :ensure nil)
+(use-package helm-lsp)
+(use-package helm
+  :config (helm-mode))
+(use-package lsp-ivy)
+(ivy-mode 1)
+(use-package lsp-treemacs
+  :after lsp)
 
 (use-package lsp-mode
   :config
@@ -282,6 +335,14 @@
               :map md/leader-map
               ("Ni" . lsp-ui-imenu)))
 
+
+(require 'lsp-java-boot)
+;; to enable the lenses
+(add-hook 'lsp-mode-hook #'lsp-lens-mode)
+(add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
+(setq-default dotspacemacs-configuration-layers
+              '((lsp :variables lsp-lens-enable t)))
+
 (use-package pyvenv
   :demand t
   :config
@@ -302,11 +363,6 @@
 (projectile-mode +1)
 (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
 (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-
-(use-package lsp-ivy)
-(ivy-mode 1)
-(use-package lsp-treemacs
-  :after lsp)
 
 ;;(use-package counsel-projectile
 ;;  :after projectile)

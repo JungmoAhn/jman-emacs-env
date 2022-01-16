@@ -1,7 +1,7 @@
 CWD = $(shell pwd)
 
 # default values for EMACS
-EMACS_VER ?= 27.1
+EMACS_VER ?= 27.2
 EMACS_URL ?= http://ftp.kaist.ac.kr/gnu/emacs/emacs-${EMACS_VER}.tar.gz
 
 CFLOW_URL ?= https://fossies.org/linux/misc/cflow-1.6.tar.xz
