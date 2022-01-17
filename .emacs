@@ -14,6 +14,7 @@
 (global-font-lock-mode t) ;always hightlight source code
 (blink-cursor-mode -1) ; make cursor not blink
 (setq byte-compile-warnings '(cl-functions))
+(setenv "JAVA_HOME" "/usr/lib/jvm/java-11-openjdk-amd64")
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -24,7 +25,7 @@
  '(indent-line-function 'insert-tab t)
  '(indent-tabs-mode t)
  '(package-selected-packages
-   '(pyvenv lsp-ui lsp-ivy helm-lsp lsp-java which-key company hydra lsp-mode projectile helm-xref xcscope elpy bitbake color-theme-modern ein anaconda-mode pydoc exec-path-from-shell virtualenv linum-relative yasnippet helm-cscope python-mode magit jedi flycheck find-file-in-repository ecb))
+   '(dash yasnippet which-key use-package pyvenv projectile magit lsp-ui lsp-java lsp-ivy helm-xref helm-lsp helm-cscope flycheck company color-theme-modern))
  '(tab-width 8))
 (add-hook 'text-mode-hook
       (lambda() (setq indent-line-function 'insert-tab)))
@@ -220,8 +221,6 @@
 
 (package-install 'use-package)
 (package-install 'dash)
-					;      '(python-mode magit linum-relative epc virtualenv exec-path-from-shell pydoc anaconda-mode color-theme-modern lsp-mode yasnippet lsp-treemacs helm-lsp lsp-mode yasnippet lsp-treemacs helm-lsp projectile hydra flycheck company company-box  avy which-key helm-xref dap-mode package lsp-ivy counsel-projectile lsp-ui helm-cscope lsp-python-ms pyvenv cc-mode gnu-elpa-keyring-update lsp-java))
-
 
 ;; show magit-status in current window 
 ;;(setq magit-status-buffer-switch-function 'switch-to-buffer)
@@ -269,7 +268,7 @@
 
 
 ;; LSP Settings
-
+;TODO: M-x lsp-install-server
 
 (add-hook 'c-mode-hook 'lsp)
 (add-hook 'cpp-mode-hook 'lsp)
@@ -297,6 +296,10 @@
 (ivy-mode 1)
 (use-package lsp-treemacs
   :after lsp)
+
+(require 'lsp-java-boot)
+(add-hook 'lsp-mode-hook #'lsp-lens-mode)
+(add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
 
 (use-package lsp-mode
   :config
