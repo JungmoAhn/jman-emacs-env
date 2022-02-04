@@ -25,7 +25,7 @@
  '(indent-line-function 'insert-tab t)
  '(indent-tabs-mode t)
  '(package-selected-packages
-   '(dash yasnippet which-key use-package pyvenv projectile magit lsp-ui lsp-java lsp-ivy helm-xref helm-lsp helm-cscope flycheck company color-theme-modern))
+   '(elogcat dash yasnippet which-key use-package pyvenv projectile magit lsp-ui lsp-java lsp-ivy helm-xref helm-lsp helm-cscope flycheck company color-theme-modern))
  '(tab-width 8))
 (add-hook 'text-mode-hook
       (lambda() (setq indent-line-function 'insert-tab)))
@@ -136,8 +136,6 @@
 
 (define-key global-map (kbd "C-w d") 'toggle-window-dedicated)
 ;(define-key global-map [f3] 'cscope-find-functions-calling-this-function)
-
-
 (define-key global-map [f1] 'lsp-ui-peek-find-definitions)
 (define-key global-map [f2] 'lsp-ui-peek-find-references)
 (define-key global-map [f3] 'helm-cscope-find-this-symbol)
@@ -152,6 +150,8 @@
 
 (define-key global-map "\C-]" 'helm-cscope-find-global-definition)
 (define-key global-map "\C-t" 'helm-cscope-pop-mark)
+(define-key global-map "\C-r" 'xref-pop-marker-stack)
+
 
 ;;map key 'e' in cscope-buffer
 (defun cscope-select-entry-edit1-window ()
@@ -207,6 +207,10 @@
  '(magit-diff-removed-highlight ((((type tty)) (:foreground "IndianRed"))))
  '(magit-section-highlight ((((type tty)) nil))))
 
+(require 'package)
+(setq package-archives
+      '(("gnu" . "https://elpa.gnu.org/packages/")
+        ("gnu-devel" . "https://elpa.gnu.org/devel/")))
 
 (condition-case nil
     (require 'use-package)
@@ -221,7 +225,9 @@
 
 (package-install 'use-package)
 (package-install 'dash)
+;'(python-mode magit linum-relative epc virtualenv exec-path-from-shell pydoc anaconda-mode color-theme-modern lsp-mode yasnippet lsp-treemacs helm-lsp lsp-mode yasnippet lsp-treemacs helm-lsp projectile hydra flycheck company company-box  avy which-key helm-xref dap-mode package lsp-ivy counsel-projectile lsp-ui helm-cscope lsp-python-ms pyvenv cc-mode gnu-elpa-keyring-update lsp-java))
 
+(byte-recompile-directory (expand-file-name "~/.emacs.d") 0)
 ;; show magit-status in current window 
 ;;(setq magit-status-buffer-switch-function 'switch-to-buffer)
 
