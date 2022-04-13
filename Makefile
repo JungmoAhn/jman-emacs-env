@@ -9,7 +9,7 @@ install-anaconda:
 	pip install epc
 
 install-dependencies:
-	sudo apt-get install build-essential texinfo libx11-dev libxpm-dev libjpeg-dev libpng-dev libgif-dev libtiff-dev libgtk2.0-dev libncurses-dev libtinfo-dev mailutils libgnutls28-dev
+	sudo apt-get install build-essential texinfo libx11-dev libxpm-dev libjpeg-dev libpng-dev libgif-dev libtiff-dev libgtk2.0-dev libncurses-dev libtinfo-dev mailutils libgnutls28-dev bear git autoconf texinfo libgnutls28-dev libxml2-dev libncurses5-dev libjansson-dev
 	sudo add-apt-repository ppa:git-core/ppa
 	sudo apt-get update
 	sudo apt-get install git
@@ -20,7 +20,7 @@ install-dependencies:
 	pip3 install python-language-server[all]
 	sudo apt-get install openjdk-11-jdk
 	echo "export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64" >> ~/.bashrc
-	echo "export PATH="$PATH:$JAVA_HOME/bin” >> ~/.bashrc
+	echo "export PATH="\$PATH:\$JAVA_HOME/bin” >> ~/.bashrc
 
 install-emacs: install-dependencies
 	wget -O - "${EMACS_URL}" | tar -xz 
