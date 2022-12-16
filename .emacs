@@ -25,7 +25,7 @@
  '(indent-line-function 'insert-tab t)
  '(indent-tabs-mode t)
  '(package-selected-packages
-   '(elogcat dash yasnippet which-key use-package pyvenv projectile magit lsp-ui lsp-java lsp-ivy helm-xref helm-lsp helm-cscope flycheck company color-theme-modern))
+   '(orderless marginalia vertico rainbow-mode winum rustic hydra lsp-mode xcscope elogcat dash yasnippet which-key use-package pyvenv projectile magit lsp-ui lsp-java lsp-ivy helm-xref helm-lsp helm-cscope flycheck company color-theme-modern))
  '(tab-width 8))
 (add-hook 'text-mode-hook
       (lambda() (setq indent-line-function 'insert-tab)))
@@ -210,6 +210,7 @@
 (require 'package)
 (setq package-archives
       '(("gnu" . "https://elpa.gnu.org/packages/")
+	("melpa" . "https://melpa.org/packages/")
         ("gnu-devel" . "https://elpa.gnu.org/devel/")))
 
 (condition-case nil
@@ -272,7 +273,48 @@
                 (setq indent-tabs-mode t)
                 (c-set-style "linux-tabs-only")))))
 
+(use-package rainbow-mode
+  :ensure t)
 
+(use-package vertico
+  :ensure t
+  :config
+  (vertico-mode))
+
+(use-package marginalia
+  :ensure t
+  :config
+  (marginalia-mode))
+
+(use-package orderless
+  :ensure t
+  :config
+  (setq completion-styles '(orderless)))
+
+(setq auto-save-file-name-transforms
+      '((".*" "~/.emacs.d/auto-save-list/" t))
+      backup-directory-alist
+      '(("." . "~/.emacs.d/backups")))
+
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(menu-bar-mode -1)
+
+(use-package winum
+   :ensure t
+   :config
+	 (global-set-key (kbd "M-0") 'treemcas-select-window)
+	 (global-set-key (kbd "M-1") 'winum-select-window-1)
+	 (global-set-key (kbd "M-2") 'winum-select-window-2)
+	 (global-set-key (kbd "M-3") 'winum-select-window-3)
+	 (global-set-key (kbd "M-4") 'winum-select-window-4)
+	 (global-set-key (kbd "M-5") 'winum-select-window-5)
+	 (global-set-key (kbd "M-6") 'winum-select-window-6)
+	 (global-set-key (kbd "M-7") 'winum-select-window-7)
+	 (global-set-key (kbd "M-8") 'winum-select-window-8)
+   (winum-mode))
+   
+   
 ;; LSP Settings
 ;TODO: M-x lsp-install-server
 
@@ -372,6 +414,36 @@
 (projectile-mode +1)
 (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
 (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+
+(use-package rustic
+  :ensure
+  :bind (:map rustic-mode-map
+              ("M-j" . lsp-ui-imenu)
+              ("M-?" . lsp-find-references)
+              ("C-c C-c l" . flycheck-list-errors)
+              ("C-c C-c a" . lsp-execute-code-action)
+              ("C-c C-c r" . lsp-rename)
+              ("C-c C-c q" . lsp-workspace-restart)
+              ("C-c C-c Q" . lsp-workspace-shutdown)
+              ("C-c C-c s" . lsp-rust-analyzer-status))
+  :config
+  ;; uncomment for less flashiness
+  ;; (setq lsp-eldoc-hook nil)
+  ;; (setq lsp-enable-symbol-highlighting nil)
+  ;; (setq lsp-signature-auto-activate nil)
+
+  ;; comment to disable rustfmt on save
+  (setq rustic-format-on-save t)
+  (add-hook 'rustic-mode-hook 'rk/rustic-mode-hook))
+
+(defun rk/rustic-mode-hook ()
+  ;; so that run C-c C-c C-r works without having to confirm, but don't try to
+  ;; save rust buffers that are not file visiting. Once
+  ;; https://github.com/brotzeit/rustic/issues/253 has been resolved this should
+  ;; no longer be necessary.
+  (when buffer-file-name
+    (setq-local buffer-save-without-query t))
+  (add-hook 'before-save-hook 'lsp-format-buffer nil t))
 
 ;;(use-package counsel-projectile
 ;;  :after projectile)
