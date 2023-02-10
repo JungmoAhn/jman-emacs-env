@@ -139,12 +139,13 @@
 (define-key global-map [f1] 'lsp-ui-peek-find-definitions)
 (define-key global-map [f2] 'lsp-ui-peek-find-references)
 (define-key global-map [f3] 'helm-cscope-find-this-symbol)
+(define-key global-map [f4] 'cscope-find-this-references)
 ;(define-key global-map [f4] 'lsp-ivy-global-workspace-symbol)
-(define-key global-map [f4] 'treemacs-edit-workspaces)
 (define-key global-map [f5] 'lsp-describe-session)
-(global-set-key [f6] 'find-file-in-repository)
+(define-key global-map [f6] 'treemacs-edit-workspaces)
+;(global-set-key [f6] 'find-file-in-repository)
 (define-key global-map [f7] 'grep-find)
-(define-key global-map [f8] 'eshell)
+(define-key global-map [f8] 'project-shell)
 (define-key global-map [f12] 'whitespace-cleanup)
 ;(define-key global-map [f4] 'cscope-find-this-symbol)
 
@@ -345,10 +346,6 @@
 (use-package lsp-treemacs
   :after lsp)
 
-(require 'lsp-java-boot)
-(add-hook 'lsp-mode-hook #'lsp-lens-mode)
-(add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
-
 (use-package lsp-mode
   :config
   (setq lsp-idle-delay 0.5
@@ -387,10 +384,10 @@
               ("Ni" . lsp-ui-imenu)))
 
 
-(require 'lsp-java-boot)
+;(require 'lsp-java-boot)
 ;; to enable the lenses
 (add-hook 'lsp-mode-hook #'lsp-lens-mode)
-(add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
+;(add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
 (setq-default dotspacemacs-configuration-layers
               '((lsp :variables lsp-lens-enable t)))
 
