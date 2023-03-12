@@ -25,7 +25,7 @@
  '(indent-line-function 'insert-tab t)
  '(indent-tabs-mode t)
  '(package-selected-packages
-   '(orderless marginalia vertico rainbow-mode winum rustic hydra lsp-mode xcscope elogcat dash yasnippet which-key use-package pyvenv projectile magit lsp-ui lsp-java lsp-ivy helm-xref helm-lsp helm-cscope flycheck company color-theme-modern))
+   '(bitbake-modes orderless marginalia vertico rainbow-mode winum rustic hydra lsp-mode xcscope elogcat dash yasnippet which-key use-package pyvenv projectile magit lsp-ui lsp-java lsp-ivy helm-xref helm-lsp helm-cscope flycheck company color-theme-modern bitbake))
  '(tab-width 8))
 (add-hook 'text-mode-hook
       (lambda() (setq indent-line-function 'insert-tab)))
@@ -79,6 +79,7 @@
 ;(define-key global-map (kbd "C-w h b") 'hs-hide-block)
 ;(define-key global-map (kbd "C-w s b") 'hs-show-block)
 
+(define-key global-map (kbd "C-w p s") 'project-shell)
 
 (define-key global-map (kbd "C-w s e") 'treemacs-select-window)
 (define-key global-map (kbd "C-w s w") 'treemacs-switch-workspace)
@@ -139,13 +140,15 @@
 (define-key global-map [f1] 'lsp-ui-peek-find-definitions)
 (define-key global-map [f2] 'lsp-ui-peek-find-references)
 (define-key global-map [f3] 'helm-cscope-find-this-symbol)
-(define-key global-map [f4] 'cscope-find-this-references)
+(define-key global-map [f4] 'grep-find)
+;(define-key global-map [f4] 'cscope-find-this-references)
 ;(define-key global-map [f4] 'lsp-ivy-global-workspace-symbol)
-(define-key global-map [f5] 'lsp-describe-session)
-(define-key global-map [f6] 'treemacs-edit-workspaces)
+(define-key global-map [f5] 'lsp-mode)
+(define-key global-map [f6] 'lsp-describe-session)
+(define-key global-map [f7] 'treemacs-edit-workspaces)
 ;(global-set-key [f6] 'find-file-in-repository)
-(define-key global-map [f7] 'grep-find)
-(define-key global-map [f8] 'project-shell)
+;(define-key global-map [f7] 'grep-find)
+;(define-key global-map [f8] 'project-shell)
 (define-key global-map [f12] 'whitespace-cleanup)
 ;(define-key global-map [f4] 'cscope-find-this-symbol)
 
@@ -331,6 +334,7 @@
 (use-package yasnippet :config (yas-global-mode))
 (use-package lsp-mode :hook ((lsp-mode . lsp-enable-which-key-integration))
   :config (setq lsp-completion-enable-additional-text-edit nil))
+
 (use-package hydra)
 (use-package company)
 (add-hook 'after-init-hook 'global-company-mode)
@@ -364,6 +368,7 @@
      ("pyls.plugins.pyflakes.enabled" nil t)))
   :hook
   ((python-mode . lsp)
+   (sh-mode . lsp)
    (lsp-mode . lsp-enable-which-key-integration)))
 
 (use-package lsp-ui
@@ -441,6 +446,11 @@
   (when buffer-file-name
     (setq-local buffer-save-without-query t))
   (add-hook 'before-save-hook 'lsp-format-buffer nil t))
+
+
+(package-install 'bitbake)
+(add-to-list 'package-archives '("onpa" . "https://olanilsson.bitbucket.io/packages/"))
+;(package-install 'bitbake-modes)
 
 ;;(use-package counsel-projectile
 ;;  :after projectile)
