@@ -217,6 +217,8 @@
 	("melpa" . "https://melpa.org/packages/")
         ("gnu-devel" . "https://elpa.gnu.org/devel/")))
 
+(add-to-list 'package-archives '( "jcs-elpa" . "https://jcs-emacs.github.io/jcs-elpa/packages/") t)
+
 (condition-case nil
     (require 'use-package)
   (file-error
@@ -463,3 +465,6 @@
 ;  "pp"  'counsel-projectile
 ;  "pc"  'projectile-compile-project
 ;  "pd"  'projectile-dired)
+
+(use-package chatgpt :ensure t)
+(use-package codegpt :ensure t)

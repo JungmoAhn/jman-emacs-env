@@ -16,7 +16,6 @@ install-dependencies:
 	sudo apt-get install magit
 	sudo apt-get install cscope
 	sudo apt-get install clangd-9
-	sudo apt-get install clang
 	sudo apt-get install python3-pip
 #	pip3 install python-language-server[all]
 	sudo snap install bash-language-server
@@ -28,6 +27,9 @@ install-emacs: install-dependencies
 	#https://emacs-lsp.github.io/lsp-mode/tutorials/CPP-guide/
 	wget -O - "${EMACS_URL}" | tar -xz 
 	cd emacs-${EMACS_VER}; \
+	./configure \
+	make \
+	sudo make install
 	cp .emacs ~/
 
 install-packages:
