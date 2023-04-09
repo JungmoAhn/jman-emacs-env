@@ -215,6 +215,7 @@
 (setq package-archives
       '(("gnu" . "https://elpa.gnu.org/packages/")
 	("melpa" . "https://melpa.org/packages/")
+	("onpa" . "https://olanilsson.bitbucket.io/packages/")
         ("gnu-devel" . "https://elpa.gnu.org/devel/")))
 
 (add-to-list 'package-archives '( "jcs-elpa" . "https://jcs-emacs.github.io/jcs-elpa/packages/") t)
@@ -325,7 +326,7 @@
 ;TODO: M-x lsp-install-server
 
 (add-hook 'c-mode-hook 'lsp)
-(add-hook 'cpp-mode-hook 'lsp)
+;(add-hook 'cpp-mode-hook 'lsp)
 (add-hook 'python-mode-hook 'lsp)
 (add-hook 'java-mode-hook 'lsp)
 (add-hook 'java-mode-hook 'flycheck-mode)
@@ -451,8 +452,10 @@
 
 
 (package-install 'bitbake)
-(add-to-list 'package-archives '("onpa" . "https://olanilsson.bitbucket.io/packages/"))
-;(package-install 'bitbake-modes)
+
+;(add-to-list 'package-archives '("onpa" . "https://olanilsson.bitbucket.io/packages/"))
+(package-install 'bitbake-modes)
+(use-package bitbake-modes)
 
 ;;(use-package counsel-projectile
 ;;  :after projectile)
