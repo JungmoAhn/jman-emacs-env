@@ -22,13 +22,13 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(ecb-options-version "2.50")
- '(indent-line-function 'insert-tab t)
- '(indent-tabs-mode t)
  '(package-selected-packages
    '(bitbake-modes orderless marginalia vertico rainbow-mode winum rustic hydra lsp-mode xcscope elogcat dash yasnippet which-key use-package pyvenv projectile magit lsp-ui lsp-java lsp-ivy helm-xref helm-lsp helm-cscope flycheck company color-theme-modern bitbake))
  '(tab-width 8))
+
 (add-hook 'text-mode-hook
-      (lambda() (setq indent-line-function 'insert-tab)))
+          (lambda() (setq indent-line-function 'insert-tab)))
+
 (setq c-basic-offset 8)
 
 ;; C language settings
@@ -51,10 +51,6 @@
                                        filename))
                 (setq indent-tabs-mode t)
                 (c-set-style "linux-tabs-only")))))
-
-;(setq-default indent-tabs-mode nil); user 8 spaces instead of 1 tab
-;(setq c-basic-offset 9)
-;(setq term-buffer-maximumsize 0)
 
 ;;Key settings
 (global-unset-key "\C-w")
