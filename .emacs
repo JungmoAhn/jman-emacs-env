@@ -23,13 +23,13 @@
  ;; If there is more than one, they won't work right.
  '(ecb-options-version "2.50")
  '(package-selected-packages
-   '(bitbake-modes orderless marginalia vertico rainbow-mode winum rustic hydra lsp-mode xcscope elogcat dash yasnippet which-key use-package pyvenv projectile magit lsp-ui lsp-java lsp-ivy helm-xref helm-lsp helm-cscope flycheck company color-theme-modern bitbake))
- '(tab-width 8))
+   '(bitbake-modes orderless marginalia vertico rainbow-mode winum rustic hydra lsp-mode xcscope elogcat dash yasnippet which-key use-package pyvenv projectile magit lsp-ui lsp-java lsp-ivy helm-xref helm-lsp helm-cscope flycheck company color-theme-modern bitbake)))
 
 (add-hook 'text-mode-hook
           (lambda() (setq indent-line-function 'insert-tab)))
 
 (setq c-basic-offset 8)
+;(setq-default indent-tabs-mode nil)
 
 ;; C language settings
 (add-hook 'c-mode-common-hook
@@ -254,27 +254,6 @@
 ;; source contol settings
 (use-package magit)
 (global-set-key "\C-xg" 'magit-status)
-
-;; C language settings
-(add-hook 'c-mode-common-hook
-          (lambda ()
-            ;; Add kernel style
-            (c-add-style
-             "linux-tabs-only"
-             '("linux" (c-offsets-alist
-                        (arglist-cont-nonempty
-                         c-lineup-gcc-asm-reg
-                         c-lineup-arglist-tabs-only))))))
-
-(add-hook 'c-mode-hook
-          (lambda ()
-            (let ((filename (buffer-file-name)))
-              ;; Enable kernel mode for the appropriate files
-              (when (and filename
-                         (string-match (expand-file-name "~/src/linux-trees")
-                                       filename))
-                (setq indent-tabs-mode t)
-                (c-set-style "linux-tabs-only")))))
 
 (use-package rainbow-mode
   :ensure t)
