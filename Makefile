@@ -19,17 +19,18 @@ install-dependencies:
 	sudo apt-get install python3-pip
 #	pip3 install python-language-server[all]
 	sudo snap install bash-language-server
+	sudo apt-get install libmagickwand-dev
 	sudo apt-get install openjdk-11-jdk
 	echo "export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64" >> ~/.bashrc
 	echo "export PATH=$$PATH:$$JAVA_HOME/bin" >> ~/.bashrc
 
 install-emacs: install-dependencies
-	#https://emacs-lsp.github.io/lsp-mode/tutorials/CPP-guide/
+#	https://emacs-lsp.github.io/lsp-mode/tutorials/CPP-guide/
 	wget -O - "${EMACS_URL}" | tar -xz 
 	cd emacs-${EMACS_VER}; \
-	./configure \
-	make \
-	sudo make install
+	./configure --with-librsvg --with-imagemagick; \
+	make; \
+	sudo make install;
 	cp .emacs ~/
 
 install-packages:

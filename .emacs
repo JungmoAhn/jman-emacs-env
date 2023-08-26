@@ -23,13 +23,12 @@
  ;; If there is more than one, they won't work right.
  '(ecb-options-version "2.50")
  '(package-selected-packages
-   '(bitbake-modes orderless marginalia vertico rainbow-mode winum rustic hydra lsp-mode xcscope elogcat dash yasnippet which-key use-package pyvenv projectile magit lsp-ui lsp-java lsp-ivy helm-xref helm-lsp helm-cscope flycheck company color-theme-modern bitbake)))
-
+   '(bitbake-modes dap-mode lsp-treemacs helm orderless marginalia vertico rainbow-mode winum rustic hydra lsp-mode xcscope elogcat dash yasnippet which-key use-package pyvenv projectile magit lsp-ui lsp-java lsp-ivy helm-xref helm-lsp helm-cscope flycheck company color-theme-modern bitbake)))
 (add-hook 'text-mode-hook
           (lambda() (setq indent-line-function 'insert-tab)))
 
 (setq c-basic-offset 8)
-;(setq-default indent-tabs-mode nil)
+(setq-default indent-tabs-mode nil)
 
 ;; C language settings
 (add-hook 'c-mode-common-hook
@@ -242,32 +241,40 @@
 ;;hide-ifdef
 (add-hook 'c-mode-common-hook 'hide-ifdef-mode)
 
+(package-install 'color-theme-modern)
 (use-package color-theme-modern)
 (load-theme 'goldenrod t t)
 (enable-theme 'goldenrod)
 
+(package-install 'xcscope)
 (use-package xcscope)
+(package-install 'helm-xref)
 (use-package helm-xref)
+(package-install 'helm-cscope)
 (use-package helm-cscope)
 ;(require 'linum-relative)
 
 ;; source contol settings
+(package-install 'magit)
 (use-package magit)
 (global-set-key "\C-xg" 'magit-status)
 
 (use-package rainbow-mode
   :ensure t)
 
+(package-install 'vertico)
 (use-package vertico
   :ensure t
   :config
   (vertico-mode))
 
+(package-install 'marginalia)
 (use-package marginalia
   :ensure t
   :config
   (marginalia-mode))
 
+(package-install 'orderless)
 (use-package orderless
   :ensure t
   :config
@@ -282,6 +289,7 @@
 (scroll-bar-mode -1)
 (menu-bar-mode -1)
 
+(package-install 'winum)
 (use-package winum
    :ensure t
    :config
@@ -307,27 +315,47 @@
 (add-hook 'java-mode-hook 'flycheck-mode)
 (add-hook 'java-mode-hook 'company-mode)
 
+(package-install 'projectile)
 (use-package projectile)
+(package-install 'flycheck)
 (use-package flycheck)
+(package-install 'yasnippet)
 (use-package yasnippet :config (yas-global-mode))
+(package-install 'lsp-mode)
 (use-package lsp-mode :hook ((lsp-mode . lsp-enable-which-key-integration))
   :config (setq lsp-completion-enable-additional-text-edit nil))
 
+(package-install 'hydra)
 (use-package hydra)
+(package-install 'company)
 (use-package company)
 (add-hook 'after-init-hook 'global-company-mode)
+(package-install 'which-key)
 (use-package which-key :config (which-key-mode))
+
+(package-install 'lsp-java)
 (use-package lsp-java :config (add-hook 'java-mode-hook 'lsp))
+(package-install 'dap-mode)
 (use-package dap-mode :after lsp-mode :config (dap-auto-configure-mode))
+;(package-install 'dap-java)
 (use-package dap-java :ensure nil)
+(package-install 'helm-lsp)
 (use-package helm-lsp)
+(package-install 'helm)
 (use-package helm
   :config (helm-mode))
+(package-install 'lsp-ivy)
 (use-package lsp-ivy)
 (ivy-mode 1)
+(package-install 'lsp-treemacs)
 (use-package lsp-treemacs
   :after lsp)
 
+(require 'lsp-java-boot)
+(add-hook 'lsp-mode-hook #'lsp-lens-mode)
+(add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
+
+(package-install 'lsp-mode)
 (use-package lsp-mode
   :config
   (setq lsp-idle-delay 0.5
@@ -348,7 +376,7 @@
   ((python-mode . lsp)
    (sh-mode . lsp)
    (lsp-mode . lsp-enable-which-key-integration)))
-
+(package-install 'lsp-ui)
 (use-package lsp-ui
   :config (setq lsp-ui-sideline-show-hover t
                 lsp-ui-sideline-delay 0.5
@@ -374,12 +402,14 @@
 (setq-default dotspacemacs-configuration-layers
               '((lsp :variables lsp-lens-enable t)))
 
+(package-install 'pyvenv)
 (use-package pyvenv
   :demand t
   :config
   (setq pyvenv-workon "emacs")  ; Default venv
   (pyvenv-tracking-mode 1))  ; Automatically use pyvenv-workon via dir-locals
 
+(package-install 'projectile)
 (use-package projectile
   :diminish projectile-mode
   :config (projectile-mode)
@@ -395,6 +425,7 @@
 (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
 (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 
+(package-install 'rustic)
 (use-package rustic
   :ensure
   :bind (:map rustic-mode-map
