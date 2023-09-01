@@ -16,6 +16,7 @@ emacs-dep:
 	sudo apt-get install magit
 	sudo apt-get install cscope
 	sudo apt-get install clangd-9
+	sudo ln /usr/bin/clangd-9 /usr/bin/clangd
 	sudo apt-get install python3-pip
 #	pip3 install python-language-server[all]
         sudo snap install bash-language-server

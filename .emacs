@@ -6,6 +6,8 @@
   (exec-path-from-shell-initialize))
 
 ;################################ UI Settings ################################
+(menu-bar-mode 0)
+(tool-bar-mode 0)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 (menu-bar-mode -1)
@@ -225,8 +227,8 @@
 
 ;;hide-ifdef
 (add-hook 'c-mode-common-hook 'hide-ifdef-mode)
-;(add-hook 'c-mode-hook 'eglot-ensure)
-(add-hook 'c-mode-hook 'lsp)
+(add-hook 'c-mode-hook 'eglot-ensure)
+;(add-hook 'c-mode-hook 'lsp)
 ;(add-hook 'cpp-mode-hook 'lsp)
 (add-hook 'python-mode-hook 'lsp)
 (add-hook 'java-mode-hook 'lsp)
@@ -293,7 +295,7 @@
 (with-eval-after-load 'eglot
         (add-to-list 'eglot-server-programs
             '((c-mode c++-mode)
-                 . ("clangd-15"
+                 . ("clangd"
                        "-j=8"
                        "--log=error"
                        "--malloc-trim"
