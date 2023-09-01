@@ -1,13 +1,14 @@
-;; mac settings
+;################################ Host Settings for MAC ################################
 (setq mac-option-modifier 'meta)
 (setq mac-command-modifier 'meta)
 (setenv "LANG" "en_US.UTF8")
 (when (memq window-system '(mac ns))
   (exec-path-from-shell-initialize))
 
-;; UI settings
-(menu-bar-mode 0)
-(tool-bar-mode 0)
+;################################ UI Settings ################################
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(menu-bar-mode -1)
 ;(line-number-mode 1)
 (setq scroll-step 2)
 (setq scroll-conservatively 3)
@@ -19,28 +20,7 @@
 (setq c-basic-offset 8)
 (setq-default indent-tabs-mode nil)
 
-;; C language settings
-(add-hook 'c-mode-common-hook
-          (lambda ()
-            ;; Add kernel style
-            (c-add-style
-             "linux-tabs-only"
-             '("linux" (c-offsets-alist
-                        (arglist-cont-nonempty
-                         c-lineup-gcc-asm-reg
-                         c-lineup-arglist-tabs-only))))))
-
-(add-hook 'c-mode-hook
-          (lambda ()
-            (let ((filename (buffer-file-name)))
-              ;; Enable kernel mode for the appropriate files
-              (when (and filename
-                         (string-match (expand-file-name "~/src/linux-trees")
-                                       filename))
-                (setq indent-tabs-mode t)
-                (c-set-style "linux-tabs-only")))))
-
-;;Key settings
+;################################ Key Settings ################################
 (global-unset-key "\C-w")
 ;(define-key global-map (kbd "C-w r") 'windresize)
 (define-key global-map [(meta l)] 'buffer-menu)
@@ -98,27 +78,6 @@
 (define-key global-map (kbd "C-w f s") 'forward-sentence)
 (define-key global-map (kbd "C-w f i") 'forward-ifdef)
 
-;; pin a window
-
-(defun toggle-window-dedicated ();; Toggle window dedication
-"Toggle whether the current active window is dedicated or not"
-
-(interactive)
-
-(message 
-
- (if (let (window (get-buffer-window (current-buffer)))
-
-       (set-window-dedicated-p window 
-
-        (not (window-dedicated-p window))))
-
-    "Window '%s' is dedicated"
-
-    "Window '%s' is normal")
-
- (current-buffer)))
-
 (define-key global-map (kbd "C-w d") 'toggle-window-dedicated)
 ;(define-key global-map [f3] 'cscope-find-functions-calling-this-function)
 ;(define-key global-map [f1] 'lsp-ui-peek-find-definitions)
@@ -143,6 +102,37 @@
 (define-key global-map "\C-t" 'helm-cscope-pop-mark)
 (define-key global-map "\C-r" 'xref-pop-marker-stack)
 
+;;commenting with DOXYMACS
+
+;(define-key global-map [f5] 'doxymacs-insert-file-comment)
+;(define-key global-map [f6] 'doxymacs-insert-function-comment)
+;(define-key global-map [f7] 'doxymacs-insert-blank-multiline-comment)
+;(define-key global-map [f8] 'comment-or-uncomment-region)
+
+;################################ magit ################################
+
+(define-key global-map [f9] 'magit-status)
+(define-key global-map [f10] 'magit-show-refs)
+(define-key global-map [f11] 'magit-log)
+;(define-key global-map [f12] 'magit-remote-config-popup)
+
+;(define-key global-map [(meta 9)] 'windmove-up)
+;(define-key global-map [(meta 0)] 'windmove-up)
+(define-key global-map (kbd "C-9") 'magit-status)
+(define-key global-map (kbd "C-0") 'magit-show-refs)
+
+; pin a window
+(defun toggle-window-dedicated ();; Toggle window dedication
+"Toggle whether the current active window is dedicated or not"
+
+(interactive)
+(message
+ (if (let (window (get-buffer-window (current-buffer)))
+       (set-window-dedicated-p window
+        (not (window-dedicated-p window))))
+    "Window '%s' is dedicated"
+    "Window '%s' is normal")
+ (current-buffer)))
 
 ;;map key 'e' in cscope-buffer
 (defun cscope-select-entry-edit1-window ()
@@ -166,25 +156,6 @@
     ))
 )
 
-;;commenting with DOXYMACS
-
-;(define-key global-map [f5] 'doxymacs-insert-file-comment)
-;(define-key global-map [f6] 'doxymacs-insert-function-comment)
-;(define-key global-map [f7] 'doxymacs-insert-blank-multiline-comment)
-;(define-key global-map [f8] 'comment-or-uncomment-region)
-
-;;magit
-
-(define-key global-map [f9] 'magit-status)
-(define-key global-map [f10] 'magit-show-refs)
-(define-key global-map [f11] 'magit-log)
-;(define-key global-map [f12] 'magit-remote-config-popup)
-
-;(define-key global-map [(meta 9)] 'windmove-up)
-;(define-key global-map [(meta 0)] 'windmove-up)
-(define-key global-map (kbd "C-9") 'magit-status)
-(define-key global-map (kbd "C-0") 'magit-show-refs)
-
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -198,11 +169,12 @@
  '(magit-diff-removed-highlight ((((type tty)) (:foreground "IndianRed"))))
  '(magit-section-highlight ((((type tty)) nil))))
 
+;################################ Package Installing ################################
 (require 'package)
-(setq package-archives                                                                                                                                                                                            
-      '(("gnu" . "https://elpa.gnu.org/packages/")                                                                                                                                                                
-        ("melpa" . "https://melpa.org/packages/")                                                                                                                                                                 
-        ("onpa" . "https://olanilsson.bitbucket.io/packages/")                                                                                                                                                    
+(setq package-archives
+      '(("gnu" . "https://elpa.gnu.org/packages/")
+        ("melpa" . "https://melpa.org/packages/")
+        ("onpa" . "https://olanilsson.bitbucket.io/packages/")
         ("gnu-devel" . "https://elpa.gnu.org/devel/")
 	( "jcs-elpa" . "https://jcs-emacs.github.io/jcs-elpa/packages/")))
 
@@ -219,11 +191,32 @@
   (unless (package-installed-p package)
     (package-install package)))
 
+(byte-recompile-directory (expand-file-name "~/.emacs.d") 0)
 (message "All packages installed.")
 
-(byte-recompile-directory (expand-file-name "~/.emacs.d") 0)
-;; show magit-status in current window 
-;;(setq magit-status-buffer-switch-function 'switch-to-buffer)
+;################################ Mode Settings ################################
+(setq c-basic-offset 8)
+(setq-default indent-tabs-mode nil)
+
+(add-hook 'c-mode-common-hook
+          (lambda ()
+            ;; Add kernel style
+            (c-add-style
+             "linux-tabs-only"
+             '("linux" (c-offsets-alist
+                        (arglist-cont-nonempty
+                         c-lineup-gcc-asm-reg
+                         c-lineup-arglist-tabs-only))))))
+
+(add-hook 'c-mode-hook
+          (lambda ()
+            (let ((filename (buffer-file-name)))
+              ;; Enable kernel mode for the appropriate files
+              (when (and filename
+                         (string-match (expand-file-name "~/src/linux-trees")
+                                       filename))
+                (setq indent-tabs-mode t)
+                (c-set-style "linux-tabs-only")))))
 
 ;;hideshow for programming
 (load-library "hideshow")
@@ -231,6 +224,18 @@
 
 ;;hide-ifdef
 (add-hook 'c-mode-common-hook 'hide-ifdef-mode)
+;(add-hook 'c-mode-hook 'eglot-ensure)
+(add-hook 'c-mode-hook 'lsp)
+;(add-hook 'cpp-mode-hook 'lsp)
+(add-hook 'python-mode-hook 'lsp)
+(add-hook 'java-mode-hook 'lsp)
+(add-hook 'java-mode-hook 'flycheck-mode)
+(add-hook 'java-mode-hook 'company-mode)
+
+;; LSP Settings
+;TODO: M-x lsp-install-server
+
+;################################ Package Settings ################################
 
 (use-package color-theme-modern)
 (load-theme 'goldenrod t t)
@@ -268,10 +273,6 @@
       backup-directory-alist
       '(("." . "~/.emacs.d/backups")))
 
-(tool-bar-mode -1)
-(scroll-bar-mode -1)
-(menu-bar-mode -1)
-
 (use-package winum
    :ensure t
    :config
@@ -285,44 +286,27 @@
 	 (global-set-key (kbd "M-7") 'winum-select-window-7)
 	 (global-set-key (kbd "M-8") 'winum-select-window-8)
    (winum-mode))
-   
-   
-;; LSP Settings
-;TODO: M-x lsp-install-server
 
-(add-hook 'c-mode-hook 'lsp)
-;(add-hook 'cpp-mode-hook 'lsp)
-(add-hook 'python-mode-hook 'lsp)
-(add-hook 'java-mode-hook 'lsp)
-(add-hook 'java-mode-hook 'flycheck-mode)
-(add-hook 'java-mode-hook 'company-mode)
 
-(use-package projectile)
-(use-package flycheck)
-(use-package yasnippet :config (yas-global-mode))
-(use-package lsp-mode :hook ((lsp-mode . lsp-enable-which-key-integration))
-  :config (setq lsp-completion-enable-additional-text-edit nil))
-
-(use-package hydra)
-(use-package company)
-(add-hook 'after-init-hook 'global-company-mode)
-(use-package which-key :config (which-key-mode))
-
-(use-package lsp-java :config (add-hook 'java-mode-hook 'lsp))
-(use-package dap-mode :after lsp-mode :config (dap-auto-configure-mode))
-;(package-install 'dap-java)
-(use-package dap-java :ensure nil)
-(use-package helm-lsp)
-(use-package helm
-  :config (helm-mode))
-(use-package lsp-ivy)
-(ivy-mode 1)
-(use-package lsp-treemacs
-  :after lsp)
-
-(require 'lsp-java-boot)
-(add-hook 'lsp-mode-hook #'lsp-lens-mode)
-(add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
+(use-package eglot :ensure t)
+(with-eval-after-load 'eglot
+        (add-to-list 'eglot-server-programs
+            '((c-mode c++-mode)
+                 . ("clangd-15"
+                       "-j=8"
+                       "--log=error"
+                       "--malloc-trim"
+                       "--background-index"
+                       "--clang-tidy"
+                       "--cross-file-rename"
+                       "--completion-style=detailed"
+                       "--pch-storage=memory"
+                       "--header-insertion=never"
+                       "--header-insertion-decorators=0"))
+            '((java-mode)
+                 . ("jdtls"
+                     "-configuration" ,(expand-file-name "jdtls/config_linux" ~/.emacs.d)
+                     "-data" ,(expand-file-name "android/lineage" /home/jacobahn)))))
 
 (use-package lsp-mode
   :config
@@ -344,6 +328,10 @@
   ((python-mode . lsp)
    (sh-mode . lsp)
    (lsp-mode . lsp-enable-which-key-integration)))
+
+;(use-package lsp-mode :hook ((lsp-mode . lsp-enable-which-key-integration))
+;  :config (setq lsp-completion-enable-additional-text-edit nil))
+
 (use-package lsp-ui
   :config (setq lsp-ui-sideline-show-hover t
                 lsp-ui-sideline-delay 0.5
@@ -361,13 +349,34 @@
               :map md/leader-map
               ("Ni" . lsp-ui-imenu)))
 
+(use-package projectile)
+(use-package flycheck)
+(use-package yasnippet :config (yas-global-mode))
+(use-package hydra)
+(use-package company)
+(add-hook 'after-init-hook 'global-company-mode)
+(use-package which-key :config (which-key-mode))
+(use-package helm-lsp)
+(use-package helm
+  :config (helm-mode))
+(use-package lsp-ivy)
+(ivy-mode 1)
+(use-package lsp-treemacs
+  :after lsp)
 
-;(require 'lsp-java-boot)
-;; to enable the lenses
+; lsp java
+
+(use-package lsp-java :config (add-hook 'java-mode-hook 'lsp))
+(use-package dap-mode :after lsp-mode :config (dap-auto-configure-mode))
+;(package-install 'dap-java)
+(use-package dap-java :ensure nil)
+(require 'lsp-java-boot)
 (add-hook 'lsp-mode-hook #'lsp-lens-mode)
-;(add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
+(add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
 (setq-default dotspacemacs-configuration-layers
               '((lsp :variables lsp-lens-enable t)))
+
+; Python
 
 (use-package pyvenv
   :demand t
@@ -375,20 +384,8 @@
   (setq pyvenv-workon "emacs")  ; Default venv
   (pyvenv-tracking-mode 1))  ; Automatically use pyvenv-workon via dir-locals
 
-(use-package projectile
-  :diminish projectile-mode
-  :config (projectile-mode)
-  :demand t
-  :bind-keymap
-  ("C-c p" . projectile-command-map)
-  :init
-  (when (file-directory-p "~/Projects/Code")
-    (setq projectile-project-search-path '("~/Projects/Code")))
-  (setq projectile-switch-project-action #'projectile-dired))
 
-(projectile-mode +1)
-(define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
-(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+; Rustic
 
 (use-package rustic
   :ensure
@@ -421,9 +418,27 @@
   (add-hook 'before-save-hook 'lsp-format-buffer nil t))
 
 
+; Bitbake
+
 ;(add-to-list 'package-archives '("onpa" . "https://olanilsson.bitbucket.io/packages/"))
 ;(use-package bitbake-modes)
 
+;(use-package projectile
+;  :diminish projectile-mode
+;  :config (projectile-mode)
+;  :demand t
+;  :bind-keymap
+;  ("C-c p" . projectile-command-map)
+;  :init
+;  (when (file-directory-p "~/Projects/Code")
+;    (setq projectile-project-search-path '("~/Projects/Code")))
+;  (setq projectile-switch-project-action #'projectile-dired))
+
+;Projectile
+
+;(projectile-mode +1)
+;(define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
+;(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 ;;(use-package counsel-projectile
 ;;  :after projectile)
 
@@ -436,34 +451,7 @@
 ;  "pc"  'projectile-compile-project
 ;  "pd"  'projectile-dired)
 
-(use-package chatgpt :ensure t)
-(use-package codegpt :ensure t)
+;ChatGPT
 
-(use-package eglot :ensure t)
-(with-eval-after-load 'eglot
-        (add-to-list 'eglot-server-programs
-            '((c-mode c++-mode)
-                 . ("clangd-15"
-                       "-j=8"
-                       "--log=error"
-                       "--malloc-trim"
-                       "--background-index"
-                       "--clang-tidy"
-                       "--cross-file-rename"
-                       "--completion-style=detailed"
-                       "--pch-storage=memory"
-                       "--header-insertion=never"
-                       "--header-insertion-decorators=0"))
-            '((java-mode)
-                 . ("jdtls"
-                     "-configuration" ,(expand-file-name "jdtls/config_linux" ~/.emacs.d)
-                     "-data" ,(expand-file-name "android/lineage" /home/jacobahn)))))
-
-;(add-hook 'c-mode-hook 'eglot-ensure)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(bitbake color-theme-modern company flycheck helm-cscope helm-lsp helm-xref lsp-ivy lsp-java lsp-ui magit projectile pyvenv which-key yasnippet elogcat xcscope lsp-mode hydra rustic winum rainbow-mode vertico marginalia orderless chatgpt codegpt)))
+;(use-package chatgpt :ensure t)
+;(use-package codegpt :ensure t)
