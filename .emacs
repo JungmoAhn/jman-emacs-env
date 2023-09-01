@@ -176,7 +176,8 @@
         ("melpa" . "https://melpa.org/packages/")
         ("onpa" . "https://olanilsson.bitbucket.io/packages/")
         ("gnu-devel" . "https://elpa.gnu.org/devel/")
-	( "jcs-elpa" . "https://jcs-emacs.github.io/jcs-elpa/packages/")))
+	( "jcs-elpa" . "https://jcs-emacs.github.io/jcs-elpa/packages/")
+        ("onpa" . "https://olanilsson.bitbucket.io/packages/")))  ;for bitbake
 
 ;(add-to-list 'package-archives '( "jcs-elpa" . "https://jcs-emacs.github.io/jcs-elpa/packages/") t)
 ;(package-refresh-contents))
@@ -184,7 +185,7 @@
 
 ;; List of packages you want to install
 (defvar my-packages
-   '(codegpt chatgpt orderless marginalia vertico rainbow-mode winum rustic hydra lsp-mode xcscope elogcat dash yasnippet which-key pyvenv projectile magit lsp-ui lsp-java lsp-ivy helm-xref helm-lsp helm-cscope flycheck company color-theme-modern bitbake))
+   '(codegpt chatgpt orderless marginalia vertico rainbow-mode winum rustic hydra lsp-mode xcscope dash yasnippet which-key pyvenv projectile magit lsp-ui lsp-java lsp-ivy helm-xref helm-lsp helm-cscope flycheck company color-theme-modern elogcat bitbake-modes))
 
 ;; Install packages
 (dolist (package my-packages)
@@ -418,10 +419,7 @@
   (add-hook 'before-save-hook 'lsp-format-buffer nil t))
 
 
-; Bitbake
-
-;(add-to-list 'package-archives '("onpa" . "https://olanilsson.bitbucket.io/packages/"))
-;(use-package bitbake-modes)
+(use-package bitbake-modes)
 
 ;(use-package projectile
 ;  :diminish projectile-mode

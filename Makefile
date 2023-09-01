@@ -9,7 +9,7 @@ anaconda:
 	pip install epc
 
 emacs-dep:
-	sudo apt-get install build-essential texinfo libx11-dev libxpm-dev libjpeg-dev libpng-dev libgif-dev libtiff-dev libgtk2.0-dev libncurses-dev libtinfo-dev mailutils libgnutls28-dev bear git autoconf texinfo libgnutls28-dev libxml2-dev libncurses5-dev libjansson-dev snapd
+	sudo apt-get install build-essential texinfo libx11-dev libxpm-dev libjpeg-dev libpng-dev libgif-dev libtiff-dev libgtk2.0-dev libncurses-dev libtinfo-dev mailutils libgnutls28-dev bear git autoconf texinfo libgnutls28-dev libxml2-dev libncurses5-dev libjansson-dev software-properties-common snapd
 	sudo add-apt-repository ppa:git-core/ppa
 	sudo apt-get update
 	sudo apt-get install git
@@ -18,7 +18,7 @@ emacs-dep:
 	sudo apt-get install clangd-9
 	sudo apt-get install python3-pip
 #	pip3 install python-language-server[all]
-	sudo snap install bash-language-server
+        sudo snap install bash-language-server
 	sudo apt-get install libmagickwand-dev
 	sudo apt-get install openjdk-11-jdk
 	echo "export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64" >> ~/.bashrc
