@@ -1,14 +1,14 @@
 CWD = $(shell pwd)
 
 include env.mk
-all: install-emacs install-packages
+all: emacs
 
-install-anaconda:
+anaconda:
 	wget -O anaconda.sh "${ANACONDA_URL}"; bash anaconda.sh; rm anaconda.sh
 	conda install virtualenv
 	pip install epc
 
-install-dependencies:
+emacs-dep:
 	sudo apt-get install build-essential texinfo libx11-dev libxpm-dev libjpeg-dev libpng-dev libgif-dev libtiff-dev libgtk2.0-dev libncurses-dev libtinfo-dev mailutils libgnutls28-dev bear git autoconf texinfo libgnutls28-dev libxml2-dev libncurses5-dev libjansson-dev snapd
 	sudo add-apt-repository ppa:git-core/ppa
 	sudo apt-get update
@@ -24,16 +24,13 @@ install-dependencies:
 	echo "export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64" >> ~/.bashrc
 	echo "export PATH=$$PATH:$$JAVA_HOME/bin" >> ~/.bashrc
 
-install-emacs: install-dependencies
+emacs: emacs-dep
 #	https://emacs-lsp.github.io/lsp-mode/tutorials/CPP-guide/
 	wget -O - "${EMACS_URL}" | tar -xz 
 	cd emacs-${EMACS_VER}; \
 	./configure --with-librsvg --with-imagemagick; \
 	make; \
 	sudo make install;
-	cp .emacs ~/
-
-install-packages:
 	cp .emacs ~/
 	emacs
 
