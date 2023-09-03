@@ -185,7 +185,7 @@
 
 ;; List of packages you want to install
 (defvar my-packages
-   '(codegpt chatgpt orderless marginalia vertico rainbow-mode winum rustic hydra lsp-mode xcscope dash yasnippet which-key pyvenv projectile magit lsp-ui lsp-java lsp-ivy helm-xref helm-lsp helm-cscope flycheck company color-theme-modern elogcat bitbake-modes evil-textobj-tree-sitter ts-fold helm-tree-sitter treesit-auto))
+   '(codegpt chatgpt orderless marginalia vertico rainbow-mode winum rustic hydra lsp-mode xcscope dash yasnippet which-key pyvenv projectile magit lsp-ui lsp-java lsp-ivy helm-xref helm-lsp helm-cscope flycheck company color-theme-modern elogcat bitbake-modes treesit-langs treesit-auto)) ;TODO: evil-textobj-tree-sitter ts-fold
 
 ;; Install packages
 (dolist (package my-packages)
@@ -226,13 +226,16 @@
 ;;hide-ifdef
 (add-hook 'c-mode-common-hook 'hide-ifdef-mode)
 (add-hook 'c-mode-hook 'eglot-ensure)
+
 (add-hook 'java-mode-hook 'eglot-ensure)
+
+(add-hook 'python-mode-hook 'eglot-ensure)
+;(add-hook 'python-mode-hook 'python-ts-mode)
+
 ;;(add-hook 'c-mode-hook 'lsp)
 ;;(add-hook 'cpp-mode-hook 'lsp)
 ;;(add-hook 'python-mode-hook 'lsp)
 ;;(add-hook 'java-mode-hook 'lsp)
-;;(add-hook 'java-mode-hook 'flycheck-mode)
-;;(add-hook 'java-mode-hook 'company-mode)
 
 ;; LSP Settings
 ;;TODO: M-x lsp-install-server
@@ -310,50 +313,10 @@
 
 (setq major-mode-remap-alist
  '((yaml-mode . yaml-ts-mode)
-   (bash-mode . bash-ts-mode)
-   (python-mode . python-ts-mode)))
+   (bash-mode . bash-ts-mode)))
 
-;; Fix path
-(use-package exec-path-from-shell
-  :ensure t
-  :config
-  (when (memq window-system '(mac ns x))
-    (exec-path-from-shell-initialize)))
-
-;; Open python files in tree-sitter mode.
-(add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
-
-;; eglot
-
-(use-package eglot
-  :ensure t
-  :defer t
-  :bind (:map eglot-mode-map
-              ("C-c C-d" . eldoc)
-              ("C-c C-e" . eglot-rename)
-              ("C-c C-o" . python-sort-imports)
-              ("C-c C-f" . eglot-format-buffer))
-  :config
-  :hook ((python-ts-mode . eglot-ensure)
-         (python-ts-mode . flyspell-prog-mode)
-         (python-ts-mode . superword-mode)
-         (python-ts-mode . hs-minor-mode)
-         (python-ts-mode . (lambda () (set-fill-column 88)))))
-
-(with-eval-after-load 'eglot
-        (add-to-list 'eglot-server-programs
-            '((c-mode c++-mode)
-                 . ("clangd"
-                       "-j=8"
-                       "--log=error"
-                       "--malloc-trim"
-                       "--background-index"
-                       "--clang-tidy"
-                       "--cross-file-rename"
-                       "--completion-style=detailed"
-                       "--pch-storage=memory"
-                       "--header-insertion=never"
-                       "--header-insertion-decorators=0"))))
+(add-hook 'eglot-managed-mode-hook (lambda ()
+                                     (treesit-hl-toggle t))) ; Enable Treesitter highlighting
 
 ;; lsp-mode
 
