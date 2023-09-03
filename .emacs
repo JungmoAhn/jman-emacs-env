@@ -1,28 +1,28 @@
-;################################ Host Settings for MAC ################################
+;;################################ Host Settings for MAC ################################
 (setq mac-option-modifier 'meta)
 (setq mac-command-modifier 'meta)
 (setenv "LANG" "en_US.UTF8")
 (when (memq window-system '(mac ns))
   (exec-path-from-shell-initialize))
 
-;################################ UI Settings ################################
+;;################################ UI Settings ################################
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 (menu-bar-mode -1)
-;(line-number-mode 1)
+;;(line-number-mode 1)
 (setq scroll-step 2)
 (setq scroll-conservatively 3)
 (global-font-lock-mode t) ;always hightlight source code
 (blink-cursor-mode -1) ; make cursor not blink
 (setq byte-compile-warnings '(cl-functions))
-(setenv "JAVA_HOME" "/usr/lib/jvm/java-11-openjdk-amd64")
+(setenv "JAVA_HOME" "/opt/jdk-17.0.2")
 
 (setq c-basic-offset 8)
 (setq-default indent-tabs-mode nil)
 
-;################################ Key Settings ################################
+;;################################ Key Settings ################################
 (global-unset-key "\C-w")
-;(define-key global-map (kbd "C-w r") 'windresize)
+;;(define-key global-map (kbd "C-w r") 'windresize)
 (define-key global-map [(meta l)] 'buffer-menu)
 (define-key global-map (kbd "RET") 'newline-and-indent)
 (define-key global-map (kbd "C-`") 'delete-backward-char)
@@ -36,12 +36,12 @@
 (define-key global-map (kbd "C-w h l") 'turn-off-line-numbers-display)
 
 ;; hiding & showing code
-;(define-key global-map (kbd "C-w h i a") 'hide-ifdefs)
-;(define-key global-map (kbd "C-w s i a") 'show-ifdefs)
-;(define-key global-map (kbd "C-w h i b") 'hide-ifdef-block)
-;(define-key global-map (kbd "C-w s i b") 'show-ifdef-block)
-;(define-key global-map (kbd "C-w h b") 'hs-hide-block)
-;(define-key global-map (kbd "C-w s b") 'hs-show-block)
+;; (define-key global-map (kbd "C-w h i a") 'hide-ifdefs)
+;; (define-key global-map (kbd "C-w s i a") 'show-ifdefs)
+;; (define-key global-map (kbd "C-w h i b") 'hide-ifdef-block)
+;; (define-key global-map (kbd "C-w s i b") 'show-ifdef-block)
+;; (define-key global-map (kbd "C-w h b") 'hs-hide-block)
+;; (define-key global-map (kbd "C-w s b") 'hs-show-block)
 
 (define-key global-map (kbd "C-w p s") 'project-shell)
 
@@ -58,7 +58,7 @@
 (define-key global-map (kbd "C-w R p") 'projectil-remove-known-project)
 (define-key global-map (kbd "C-w S p") 'counsel-projectile-switch-project)
 
-; manage a  current workspace
+;; manage a  current workspace
 (define-key global-map (kbd "C-w a f") 'lsp-workspace-folders-add)
 (define-key global-map (kbd "C-w r f") 'lsp-workspace-folders-remove)
 
@@ -79,24 +79,24 @@
 (define-key global-map (kbd "C-w f i") 'forward-ifdef)
 
 (define-key global-map (kbd "C-w d") 'toggle-window-dedicated)
-;(define-key global-map [f3] 'cscope-find-functions-calling-this-function)
-;(define-key global-map [f1] 'lsp-ui-peek-find-definitions)
-;(define-key global-map [f2] 'lsp-ui-peek-find-references)
+;; (define-key global-map [f3] 'cscope-find-functions-calling-this-function)
+;; (define-key global-map [f1] 'lsp-ui-peek-find-definitions)
+;; (define-key global-map [f2] 'lsp-ui-peek-find-references)
 
 (define-key global-map [f1] 'grep-find)
 (define-key global-map [f2] 'cscope-find-this-symbol)
 (define-key global-map [f3] 'helm-cscope-find-this-symbol)
 
-;(define-key global-map [f4] 'cscope-find-this-references)
-;(define-key global-map [f4] 'lsp-ivy-global-workspace-symbol)
+;;(define-key global-map [f4] 'cscope-find-this-references)
+;;(define-key global-map [f4] 'lsp-ivy-global-workspace-symbol)
 (define-key global-map [f5] 'lsp-mode)
 (define-key global-map [f6] 'lsp-describe-session)
 (define-key global-map [f7] 'treemacs-edit-workspaces)
-;(global-set-key [f6] 'find-file-in-repository)
-;(define-key global-map [f7] 'grep-find)
-;(define-key global-map [f8] 'project-shell)
+;;(global-set-key [f6] 'find-file-in-repository)
+;;(define-key global-map [f7] 'grep-find)
+;;(define-key global-map [f8] 'project-shell)
 (define-key global-map [f12] 'whitespace-cleanup)
-;(define-key global-map [f4] 'cscope-find-this-symbol)
+;;(define-key global-map [f4] 'cscope-find-this-symbol)
 
 (define-key global-map "\C-]" 'helm-cscope-find-global-definition)
 (define-key global-map "\C-t" 'helm-cscope-pop-mark)
@@ -104,24 +104,24 @@
 
 ;;commenting with DOXYMACS
 
-;(define-key global-map [f5] 'doxymacs-insert-file-comment)
-;(define-key global-map [f6] 'doxymacs-insert-function-comment)
-;(define-key global-map [f7] 'doxymacs-insert-blank-multiline-comment)
-;(define-key global-map [f8] 'comment-or-uncomment-region)
+;;(define-key global-map [f5] 'doxymacs-insert-file-comment)
+;;(define-key global-map [f6] 'doxymacs-insert-function-comment)
+;;(define-key global-map [f7] 'doxymacs-insert-blank-multiline-comment)
+;;(define-key global-map [f8] 'comment-or-uncomment-region)
 
-;################################ magit ################################
+;;################################ magit ################################
 
 (define-key global-map [f9] 'magit-status)
 (define-key global-map [f10] 'magit-show-refs)
 (define-key global-map [f11] 'magit-log)
-;(define-key global-map [f12] 'magit-remote-config-popup)
+;;(define-key global-map [f12] 'magit-remote-config-popup)
 
-;(define-key global-map [(meta 9)] 'windmove-up)
-;(define-key global-map [(meta 0)] 'windmove-up)
+;;(define-key global-map [(meta 9)] 'windmove-up)
+;;(define-key global-map [(meta 0)] 'windmove-up)
 (define-key global-map (kbd "C-9") 'magit-status)
 (define-key global-map (kbd "C-0") 'magit-show-refs)
 
-; pin a window
+;; pin a window
 (defun toggle-window-dedicated ();; Toggle window dedication
 "Toggle whether the current active window is dedicated or not"
 
@@ -169,7 +169,7 @@
  '(magit-diff-removed-highlight ((((type tty)) (:foreground "IndianRed"))))
  '(magit-section-highlight ((((type tty)) nil))))
 
-;################################ Package Installing ################################
+;;################################ Package Installing ################################
 (require 'package)
 (setq package-archives
       '(("gnu" . "https://elpa.gnu.org/packages/")
@@ -185,7 +185,7 @@
 
 ;; List of packages you want to install
 (defvar my-packages
-   '(codegpt chatgpt orderless marginalia vertico rainbow-mode winum rustic hydra lsp-mode xcscope dash yasnippet which-key pyvenv projectile magit lsp-ui lsp-java lsp-ivy helm-xref helm-lsp helm-cscope flycheck company color-theme-modern elogcat bitbake-modes))
+   '(codegpt chatgpt orderless marginalia vertico rainbow-mode winum rustic hydra lsp-mode xcscope dash yasnippet which-key pyvenv projectile magit lsp-ui lsp-java lsp-ivy helm-xref helm-lsp helm-cscope flycheck company color-theme-modern elogcat bitbake-modes evil-textobj-tree-sitter ts-fold helm-tree-sitter treesit-auto))
 
 ;; Install packages
 (dolist (package my-packages)
@@ -195,7 +195,7 @@
 (byte-recompile-directory (expand-file-name "~/.emacs.d") 0)
 (message "All packages installed.")
 
-;################################ Mode Settings ################################
+;;################################ Mode Settings ################################
 (setq c-basic-offset 8)
 (setq-default indent-tabs-mode nil)
 
@@ -226,15 +226,16 @@
 ;;hide-ifdef
 (add-hook 'c-mode-common-hook 'hide-ifdef-mode)
 (add-hook 'c-mode-hook 'eglot-ensure)
-;(add-hook 'c-mode-hook 'lsp)
-;(add-hook 'cpp-mode-hook 'lsp)
-(add-hook 'python-mode-hook 'lsp)
-(add-hook 'java-mode-hook 'lsp)
-(add-hook 'java-mode-hook 'flycheck-mode)
-(add-hook 'java-mode-hook 'company-mode)
+(add-hook 'java-mode-hook 'eglot-ensure)
+;;(add-hook 'c-mode-hook 'lsp)
+;;(add-hook 'cpp-mode-hook 'lsp)
+;;(add-hook 'python-mode-hook 'lsp)
+;;(add-hook 'java-mode-hook 'lsp)
+;;(add-hook 'java-mode-hook 'flycheck-mode)
+;;(add-hook 'java-mode-hook 'company-mode)
 
 ;; LSP Settings
-;TODO: M-x lsp-install-server
+;;TODO: M-x lsp-install-server
 
 ;################################ Package Settings ################################
 
@@ -245,7 +246,7 @@
 (use-package xcscope)
 (use-package helm-xref)
 (use-package helm-cscope)
-;(require 'linum-relative)
+;;(require 'linum-relative)
 
 ;; source contol settings
 (use-package magit)
@@ -288,8 +289,57 @@
 	 (global-set-key (kbd "M-8") 'winum-select-window-8)
    (winum-mode))
 
+;; tree-sitter
 
-(use-package eglot :ensure t)
+(setq treesit-language-source-alist
+   '((bash "https://github.com/tree-sitter/tree-sitter-bash")
+     (cmake "https://github.com/uyha/tree-sitter-cmake")
+     (css "https://github.com/tree-sitter/tree-sitter-css")
+     (elisp "https://github.com/Wilfred/tree-sitter-elisp")
+     (go "https://github.com/tree-sitter/tree-sitter-go")
+     (html "https://github.com/tree-sitter/tree-sitter-html")
+     (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
+     (json "https://github.com/tree-sitter/tree-sitter-json")
+     (make "https://github.com/alemuller/tree-sitter-make")
+     (markdown "https://github.com/ikatyang/tree-sitter-markdown")
+     (python "https://github.com/tree-sitter/tree-sitter-python")
+     (toml "https://github.com/tree-sitter/tree-sitter-toml")
+     (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
+     (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
+     (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
+
+(setq major-mode-remap-alist
+ '((yaml-mode . yaml-ts-mode)
+   (bash-mode . bash-ts-mode)
+   (python-mode . python-ts-mode)))
+
+;; Fix path
+(use-package exec-path-from-shell
+  :ensure t
+  :config
+  (when (memq window-system '(mac ns x))
+    (exec-path-from-shell-initialize)))
+
+;; Open python files in tree-sitter mode.
+(add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
+
+;; eglot
+
+(use-package eglot
+  :ensure t
+  :defer t
+  :bind (:map eglot-mode-map
+              ("C-c C-d" . eldoc)
+              ("C-c C-e" . eglot-rename)
+              ("C-c C-o" . python-sort-imports)
+              ("C-c C-f" . eglot-format-buffer))
+  :config
+  :hook ((python-ts-mode . eglot-ensure)
+         (python-ts-mode . flyspell-prog-mode)
+         (python-ts-mode . superword-mode)
+         (python-ts-mode . hs-minor-mode)
+         (python-ts-mode . (lambda () (set-fill-column 88)))))
+
 (with-eval-after-load 'eglot
         (add-to-list 'eglot-server-programs
             '((c-mode c++-mode)
@@ -303,52 +353,60 @@
                        "--completion-style=detailed"
                        "--pch-storage=memory"
                        "--header-insertion=never"
-                       "--header-insertion-decorators=0"))
-            '((java-mode)
-                 . ("jdtls"
-                     "-configuration" ,(expand-file-name "jdtls/config_linux" ~/.emacs.d)
-                     "-data" ,(expand-file-name "android/lineage" /home/jacobahn)))))
+                       "--header-insertion-decorators=0"))))
 
-(use-package lsp-mode
-  :config
-  (setq lsp-idle-delay 0.5
-        lsp-enable-symbol-highlighting t
-        lsp-enable-snippet nil  ;; Not supported by company capf, which is the recommended company backend
-        lsp-pyls-plugins-flake8-enabled t)
-  (lsp-register-custom-settings
-   '(("pyls.plugins.pyls_mypy.enabled" t t)
-     ("pyls.plugins.pyls_mypy.live_mode" nil t)
-     ("pyls.plugins.pyls_black.enabled" t t)
-     ("pyls.plugins.pyls_isort.enabled" t t)
+;; lsp-mode
 
-     ;; Disable these as they're duplicated by flake8
-     ("pyls.plugins.pycodestyle.enabled" nil t)
-     ("pyls.plugins.mccabe.enabled" nil t)
-     ("pyls.plugins.pyflakes.enabled" nil t)))
-  :hook
-  ((python-mode . lsp)
-   (sh-mode . lsp)
-   (lsp-mode . lsp-enable-which-key-integration)))
+;; (use-package lsp-mode
+;;   :config
+;;   (setq lsp-idle-delay 0.5
+;;         lsp-enable-symbol-highlighting t
+;;         lsp-enable-snippet nil  ;; Not supported by company capf, which is the recommended company backend
+;;         lsp-pyls-plugins-flake8-enabled t)
+;;   (lsp-register-custom-settings
+;;    '(("pyls.plugins.pyls_mypy.enabled" t t)
+;;      ("pyls.plugins.pyls_mypy.live_mode" nil t)
+;;      ("pyls.plugins.pyls_black.enabled" t t)
+;;      ("pyls.plugins.pyls_isort.enabled" t t)
 
-;(use-package lsp-mode :hook ((lsp-mode . lsp-enable-which-key-integration))
-;  :config (setq lsp-completion-enable-additional-text-edit nil))
+;;      ;; Disable these as they're duplicated by flake8
+;;      ("pyls.plugins.pycodestyle.enabled" nil t)
+;;      ("pyls.plugins.mccabe.enabled" nil t)
+;;      ("pyls.plugins.pyflakes.enabled" nil t)))
+;;   :hook
+;;   ((python-mode . lsp)
+;;    (sh-mode . lsp)
+;;    (lsp-mode . lsp-enable-which-key-integration)))
 
-(use-package lsp-ui
-  :config (setq lsp-ui-sideline-show-hover t
-                lsp-ui-sideline-delay 0.5
-                lsp-ui-doc-delay 5
-                lsp-ui-sideline-ignore-duplicates t
-                lsp-ui-doc-position 'bottom
-                lsp-ui-doc-alignment 'frame
-                lsp-ui-doc-header nil
-                lsp-ui-doc-include-signature t
-                lsp-ui-doc-use-childframe t)
-  :commands lsp-ui-mode
-  :bind (:map evil-normal-state-map
-              ("gd" . lsp-ui-peek-find-definitions)
-              ("gr" . lsp-ui-peek-find-references)
-              :map md/leader-map
-              ("Ni" . lsp-ui-imenu)))
+;; (use-package lsp-mode :hook ((lsp-mode . lsp-enable-which-key-integration))
+;;   :config (setq lsp-completion-enable-additional-text-edit nil))
+
+;; (use-package lsp-ui
+;;   :config (setq lsp-ui-sideline-show-hover t
+;;                 lsp-ui-sideline-delay 0.5
+;;                 lsp-ui-doc-delay 5
+;;                 lsp-ui-sideline-ignore-duplicates t
+;;                 lsp-ui-doc-position 'bottom
+;;                 lsp-ui-doc-alignment 'frame
+;;                 lsp-ui-doc-header nil
+;;                 lsp-ui-doc-include-signature t
+;;                 lsp-ui-doc-use-childframe t)
+;;   :commands lsp-ui-mode
+;;   :bind (:map evil-normal-state-map
+;;               ("gd" . lsp-ui-peek-find-definitions)
+;;               ("gr" . lsp-ui-peek-find-references)
+;;               :map md/leader-map
+;;               ("Ni" . lsp-ui-imenu)))
+
+;; (use-package lsp-java :config (add-hook 'java-mode-hook 'lsp))
+;; (use-package dap-mode :after lsp-mode :config (dap-auto-configure-mode))
+;; (package-install 'dap-java)
+;; (use-package dap-java :ensure nil)
+;; (require 'lsp-java-boot)
+;; (add-hook 'lsp-mode-hook #'lsp-lens-mode)
+;; (add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
+;; (setq-default dotspacemacs-configuration-layers
+;;               '((lsp :variables lsp-lens-enable t)))
 
 (use-package projectile)
 (use-package flycheck)
@@ -365,19 +423,7 @@
 (use-package lsp-treemacs
   :after lsp)
 
-; lsp java
-
-(use-package lsp-java :config (add-hook 'java-mode-hook 'lsp))
-(use-package dap-mode :after lsp-mode :config (dap-auto-configure-mode))
-;(package-install 'dap-java)
-(use-package dap-java :ensure nil)
-(require 'lsp-java-boot)
-(add-hook 'lsp-mode-hook #'lsp-lens-mode)
-(add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
-(setq-default dotspacemacs-configuration-layers
-              '((lsp :variables lsp-lens-enable t)))
-
-; Python
+;; Python
 
 (use-package pyvenv
   :demand t
@@ -386,7 +432,7 @@
   (pyvenv-tracking-mode 1))  ; Automatically use pyvenv-workon via dir-locals
 
 
-; Rustic
+;; Rustic
 
 (use-package rustic
   :ensure
@@ -418,36 +464,35 @@
     (setq-local buffer-save-without-query t))
   (add-hook 'before-save-hook 'lsp-format-buffer nil t))
 
-
 (use-package bitbake-modes)
 
-;(use-package projectile
-;  :diminish projectile-mode
-;  :config (projectile-mode)
-;  :demand t
-;  :bind-keymap
-;  ("C-c p" . projectile-command-map)
-;  :init
-;  (when (file-directory-p "~/Projects/Code")
-;    (setq projectile-project-search-path '("~/Projects/Code")))
-;  (setq projectile-switch-project-action #'projectile-dired))
+;;Projectile
 
-;Projectile
+;; (use-package projectile
+;;   :diminish projectile-mode
+;;   :config (projectile-mode)
+;;   :demand t
+;;   :bind-keymap
+;;   ("C-c p" . projectile-command-map)
+;;   :init
+;;   (when (file-directory-p "~/Projects/Code")
+;;     (setq projectile-project-search-path '("~/Projects/Code")))
+;;   (setq projectile-switch-project-action #'projectile-dired))
 
-;(projectile-mode +1)
-;(define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
-;(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-;;(use-package counsel-projectile
-;;  :after projectile)
+;; (projectile-mode +1)
+;; (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
+;; (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+;; (use-package counsel-projectile
+;;   :after projectile)
 
-;(dw/leader-key-def
-;  "pf"  'counsel-projectile-find-file
-;  "ps"  'counsel-projectile-switch-project
-;  "pF"  'counsel-projectile-rg
-;  ;; "pF"  'consult-ripgrep
-;  "pp"  'counsel-projectile
-;  "pc"  'projectile-compile-project
-;  "pd"  'projectile-dired)
+;; (dw/leader-key-def
+;;   "pf"  'counsel-projectile-find-file
+;;   "ps"  'counsel-projectile-switch-project
+;;   "pF"  'counsel-projectile-rg
+;;   "pF"  'consult-ripgrep
+;;   "pp"  'counsel-projectile
+;;   "pc"  'projectile-compile-project
+;;   "pd"  'projectile-dired)
 
 ;ChatGPT
 
