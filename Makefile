@@ -16,14 +16,14 @@ emacs-dep:
 	sudo apt-get install magit
 	sudo apt-get install cscope
 	sudo apt-get install clangd-9
-	sudo ln /usr/bin/clangd-9 /usr/bin/clangd
+	sudo ln -sf /usr/bin/clangd-9 /usr/bin/clangd
 #       sudo apt-get install libtree-sitter-dev
 #       https://packages.debian.org/bookworm/amd64/libtree-sitter0/download
 	wget http://ftp.kr.debian.org/debian/pool/main/t/tree-sitter/libtree-sitter0_0.20.7-1_amd64.deb
 	sudo dpkg -i libtree-sitter0_0.20.7-1_amd64.deb
 #       https://packages.debian.org/bookworm/main/libtree-sitter-dev
 	wget http://ftp.kr.debian.org/debian/pool/main/t/tree-sitter/libtree-sitter-dev_0.20.7-1_amd64.deb
-	sudo dpkg -i tree-sitter/libtree-sitter-dev_0.20.7-1_amd64.deb
+	sudo dpkg -i libtree-sitter-dev_0.20.7-1_amd64.deb
 	sudo apt-get install python3-pip
 #	pip3 install python-language-server[all]
 #       sudo snap install bash-language-server
@@ -33,7 +33,7 @@ emacs-dep:
 	wget https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_linux-x64_bin.tar.gz
 	tar xvfz openjdk-17.0.2_linux-x64_bin.tar.gz
 	sudo mv jdk-17.0.2 /opt
-	wget https://www.eclipse.org/downloads/download.php?file=/jdtls/milestones/1.26.0/jdt-language-server-1.26.0-202307271613.tar.gz
+	wget https://www.eclipse.org/downloads/download.php?file=/jdtls/snapshots/jdt-language-server-latest.tar.gz
 	mkdir jdtls
 	tar xvfz download.php\?file\=%2Fjdtls%2Fmilestones%2F1.26.0%2Fjdt-language-server-1.26.0-202307271613.tar.gz -C jdtls
 	mkdir -p ~/.emacs.d
