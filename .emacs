@@ -383,7 +383,6 @@
 ;; (use-package helm
 ;;   :config (helm-mode))
 (use-package lsp-ivy)
-(ivy-mode 1)
 (use-package lsp-treemacs
   :after lsp)
 
