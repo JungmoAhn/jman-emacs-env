@@ -32,10 +32,12 @@ emacs-dep:
 #       for eglot java
 	wget https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_linux-x64_bin.tar.gz
 	tar xvfz openjdk-17.0.2_linux-x64_bin.tar.gz
-	sudo mv jdk-17.0.2 /opt
+	sudo rm -rf /opt/jdk-17.0.2
+	sudo mv -f jdk-17.0.2 /opt
 	wget https://www.eclipse.org/downloads/download.php?file=/jdtls/snapshots/jdt-language-server-latest.tar.gz
-	mkdir jdtls
-	tar xvfz download.php\?file\=%2Fjdtls%2Fmilestones%2F1.26.0%2Fjdt-language-server-1.26.0-202307271613.tar.gz -C jdtls
+	mkdir -p jdtls
+	tar xvfz download.php?file=%2Fjdtls%2Fsnapshots%2Fjdt-language-server-latest.tar.gz -C jdtls
+	rm -rf ~/.emacs.d
 	mkdir -p ~/.emacs.d
 	mv jdtls ~/.emacs.d
 	echo "export JAVA_HOME=/opt/jdk-17" >> ~/.bashrc
