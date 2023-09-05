@@ -379,8 +379,8 @@
 (add-hook 'after-init-hook 'global-company-mode)
 (use-package which-key :config (which-key-mode))
 (use-package helm-lsp)
-(use-package helm
-  :config (helm-mode))
+;; (use-package helm
+;;   :config (helm-mode))
 (use-package lsp-ivy)
 (ivy-mode 1)
 (use-package lsp-treemacs
