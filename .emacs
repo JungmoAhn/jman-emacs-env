@@ -226,6 +226,7 @@
 ;;hide-ifdef
 (add-hook 'c-mode-common-hook 'hide-ifdef-mode)
 (add-hook 'c-mode-hook 'eglot-ensure)
+(add-hook 'c++-mode-hook 'eglot-ensure)
 
 (add-hook 'java-mode-hook 'eglot-ensure)
 
