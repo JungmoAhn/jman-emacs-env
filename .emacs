@@ -43,7 +43,7 @@
 ;; (define-key global-map (kbd "C-w h b") 'hs-hide-block)
 ;; (define-key global-map (kbd "C-w s b") 'hs-show-block)
 
-(define-key global-map (kbd "C-w p s") 'project-shell)
+(define-key global-map (kbd "C-w p s") 'project-eshell)
 
 (define-key global-map (kbd "C-w s e") 'treemacs-select-window)
 (define-key global-map (kbd "C-w s w") 'treemacs-switch-workspace)
@@ -316,6 +316,11 @@
  '((yaml-mode . yaml-ts-mode)
    (bash-mode . bash-ts-mode)))
 
+(defface treesit-face-function.call
+  '((default :inherit (link font-lock-function-name-face) :underline nil :bold nil :foreground "gold"))
+  "Face for function calls."
+  :group 'treesit-faces)
+
 (add-hook 'eglot-managed-mode-hook (lambda ()
                                      (treesit-hl-toggle t))) ; Enable Treesitter highlighting
 
@@ -461,3 +466,9 @@
 
 ;(use-package chatgpt :ensure t)
 ;(use-package codegpt :ensure t)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+
