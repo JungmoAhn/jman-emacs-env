@@ -317,7 +317,7 @@
    (bash-mode . bash-ts-mode)))
 
 (defface treesit-face-function.call
-  '((default :inherit (link font-lock-function-name-face) :underline nil :bold nil :foreground "gold"))
+  '((default :inherit (link font-lock-function-name-face) :underline nil :foreground "pink"))
   "Face for function calls."
   :group 'treesit-faces)
 
