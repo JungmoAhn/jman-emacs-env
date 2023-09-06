@@ -317,9 +317,20 @@
    (bash-mode . bash-ts-mode)))
 
 (defface treesit-face-function.call
-  '((default :inherit (link font-lock-function-name-face) :underline nil :foreground "pink"))
+  '((default :inherit (link font-lock-function-name-face) :underline nil :bold t :foreground "light goldenrod"))
   "Face for function calls."
   :group 'treesit-faces)
+
+(custom-theme-set-faces
+ 'goldenrod
+ '(fringe ((t (:background "dark slate blue"))))
+ '(header-line ((t (:background "dark slate blue" :foreground "gray70"))))
+ '(menu ((t (:background "dark slate blue" :foreground "lemon chiffon"))))
+ '(mode-line ((t (:background "dark slate blue" :foreground "lemon chiffon"
+                 :box (:line-width 1 :style released-button)))))
+ '(tool-bar ((t (:background "dark slate blue" :foreground "lemon chiffon"
+                 :box (:line-width 1 :style released-button)))))
+ )
 
 (add-hook 'eglot-managed-mode-hook (lambda ()
                                      (treesit-hl-toggle t))) ; Enable Treesitter highlighting
@@ -466,9 +477,3 @@
 
 ;(use-package chatgpt :ensure t)
 ;(use-package codegpt :ensure t)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
-
