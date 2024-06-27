@@ -9,14 +9,14 @@ anaconda:
 	pip install epc
 
 emacs-dep:
-	sudo apt-get install build-essential texinfo libx11-dev libxpm-dev libjpeg-dev libpng-dev libgif-dev libtiff-dev libgtk2.0-dev libncurses-dev libtinfo-dev mailutils libgnutls28-dev bear git autoconf texinfo libgnutls28-dev libxml2-dev libncurses5-dev libjansson-dev software-properties-common snapd
+	sudo apt-get install build-essential texinfo libx11-dev libxpm-dev libjpeg-dev libpng-dev libgif-dev libtiff-dev libgtk2.0-dev libncurses-dev libtinfo-dev mailutils libgnutls28-dev bear git autoconf texinfo libgnutls28-dev libxml2-dev libncurses5-dev libjansson-dev software-properties-common snapd python3-pip
 #	sudo add-apt-repository ppa:git-core/ppa
 	sudo apt-get update
 	sudo apt-get install git
 	sudo apt-get install magit
 	sudo apt-get install cscope
-	sudo apt-get install clangd-9
-	sudo ln -sf /usr/bin/clangd-9 /usr/bin/clangd
+	sudo apt-get install clangd-15
+	sudo ln -sf /usr/bin/clangd-15 /usr/bin/clangd
 #       sudo apt-get install libtree-sitter-dev
 #       https://packages.debian.org/bookworm/amd64/libtree-sitter0/download
 	wget http://ftp.kr.debian.org/debian/pool/main/t/tree-sitter/libtree-sitter0_0.20.7-1_amd64.deb
@@ -27,6 +27,7 @@ emacs-dep:
 	sudo apt-get install python3-pip
 #	pip3 install python-language-server[all]
 #       sudo snap install bash-language-server
+	pip3 install bitbake-language-server
 	sudo apt-get install libmagickwand-dev
 
 #       for eglot java
@@ -52,7 +53,7 @@ emacs: emacs-dep
 	make; \
 	sudo make install;
 	cp .emacs ~/
-	emacs
+	emacs -nw
 
 #M-x treesit-install-language-grammar
 #M-x treesit-langs-install-grammar

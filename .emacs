@@ -45,8 +45,9 @@
 
 (define-key global-map (kbd "C-w p s") 'project-eshell)
 
-(define-key global-map (kbd "C-w s e") 'treemacs-select-window)
+(define-key global-map (kbd "C-w o") 'projectile-switch-open-project)
 (define-key global-map (kbd "C-w s w") 'treemacs-switch-workspace)
+(define-key global-map (kbd "C-w s p") 'treemacs-select-window)
 (define-key global-map (kbd "C-w c w") 'treemacs-create-workspace)
 (define-key global-map (kbd "C-w r w") 'treemacs-remove-workspace)
 (define-key global-map (kbd "C-w c p") 'treemacs-peek)
