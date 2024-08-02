@@ -18,7 +18,7 @@
 (setenv "JAVA_HOME" "/opt/jdk-17.0.2")
 
 (setq c-basic-offset 8)
-(setq-default indent-tabs-mode nil)
+(setq-default indent-tabs-mode t)
 
 ;;################################ Key Settings ################################
 (global-unset-key "\C-w")
@@ -87,6 +87,7 @@
 (define-key global-map [f1] 'grep-find)
 (define-key global-map [f2] 'cscope-find-this-symbol)
 (define-key global-map [f3] 'helm-cscope-find-this-symbol)
+(define-key global-map [f4] 'project-find-file)
 
 ;;(define-key global-map [f4] 'cscope-find-this-references)
 ;;(define-key global-map [f4] 'lsp-ivy-global-workspace-symbol)
@@ -197,9 +198,6 @@
 (message "All packages installed.")
 
 ;;################################ Mode Settings ################################
-(setq c-basic-offset 8)
-(setq-default indent-tabs-mode nil)
-
 (add-hook 'c-mode-common-hook
           (lambda ()
             ;; Add kernel style
