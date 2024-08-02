@@ -20,6 +20,14 @@
 (setq c-basic-offset 8)
 (setq-default indent-tabs-mode t)
 
+(defun untabify-buffer ()
+  "Replace all spaces with tabs in the current buffer."
+  (interactive)
+  (untabify (point-min) (point-max))
+  (tabify (point-min) (point-max)))
+
+(global-set-key (kbd "C-c t") 'untabify-buffer)
+
 ;;################################ Key Settings ################################
 (global-unset-key "\C-w")
 ;;(define-key global-map (kbd "C-w r") 'windresize)
