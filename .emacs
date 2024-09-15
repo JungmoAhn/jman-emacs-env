@@ -128,8 +128,6 @@
 
 ;;(define-key global-map [(meta 9)] 'windmove-up)
 ;;(define-key global-map [(meta 0)] 'windmove-up)
-(define-key global-map (kbd "C-9") 'magit-status)
-(define-key global-map (kbd "C-0") 'magit-show-refs)
 
 ;; pin a window
 (defun toggle-window-dedicated ();; Toggle window dedication
