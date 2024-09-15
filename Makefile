@@ -44,6 +44,18 @@ emacs-dep:
 	echo "export JAVA_HOME=/opt/jdk-17" >> ~/.bashrc
 	echo "export PATH=$$PATH:$$JAVA_HOME/bin:~/.emacs.d/jdtls/bin" >> ~/.bashrc
 	echo "export JAVA_HOME=/opt/jdk-17" >> ~/.bashrc
+#	for ggtags especially with python
+	sudo apt-get install global
+	pip3 install pygments
+	pip install pygments
+	#git clone https://github.com/sijk/pygments-bitbake.git
+	git clone https://github.com/JungmoAhn/pygments-bitbake.git
+	cd pygments-bitbake; \
+	sudo python setup.py install;
+	echo "export GTAGSLABEL=pygments" >> ~/.bashrc
+	sudo cp /etc/gtags/gtags.conf ~/.globalrc
+	echo "export GTAGSCONF=~/.globalrc" >> ~/.bashrc
+	sed -i "s/:tc=native:/:tc=native:tc=pygments:/" ~/.globalrc
 
 emacs: emacs-dep
 #	https://emacs-lsp.github.io/lsp-mode/tutorials/CPP-guide/
