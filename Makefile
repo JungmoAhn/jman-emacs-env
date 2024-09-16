@@ -56,6 +56,8 @@ emacs-dep:
 	sudo cp /etc/gtags/gtags.conf ~/.globalrc
 	echo "export GTAGSCONF=~/.globalrc" >> ~/.bashrc
 	sed -i "s/:tc=native:/:tc=native:tc=pygments:/" ~/.globalrc
+	sed -i '/:gtags_parser=C#\\:$pygmentslib:\\/i \\t:gtags_parser=Bitbake\\:$pygmentslib:\\' ~/.globalrc
+	sed -i '/:langmap=C#\\:.cs:\\/i \\t:langmap=Bitbake\\:.bb.bbappend.bbclass.conf.inc:\\' ~/.globalrc
 
 emacs: emacs-dep
 #	https://emacs-lsp.github.io/lsp-mode/tutorials/CPP-guide/
