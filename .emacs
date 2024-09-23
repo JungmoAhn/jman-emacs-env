@@ -453,11 +453,11 @@
 ;; yocto
 (use-package ggtags
   :ensure t
-  :hook ((c-mode c++-mode asm-mode python-mode java-mode shell-mode) . ggtags-mode)
+  :hook ((c-mode c++-mode asm-mode python-mode java-mode shell-mode bitbake-mode) . ggtags-mode)
   :config
     (setq ggtags-enable-navigation-keys nil))
 
-(add-hook 'after-save-hook #'ggtags-update-tags)
+;;(add-hook 'after-save-hook #'ggtags-update-tags)
 (add-to-list 'auto-mode-alist '("\\.bb\\'" . python-mode))
 (add-to-list 'auto-mode-alist '("\\.bbclass\\'" . python-mode))
 (add-to-list 'auto-mode-alist '("\\.inc\\'" . python-mode))
