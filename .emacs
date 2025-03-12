@@ -73,11 +73,19 @@
 
 ;; moving cursor
 
+(define-key global-map (kbd "C-w w") 'winum-select-window-by-number)
+(define-key global-map (kbd "C-w g") 'goto-line)
+(define-key global-map (kbd "C-w l") 'enlarge-window)
+(define-key global-map (kbd "C-w 1") 'winum-select-window-1)
+(define-key global-map (kbd "C-w 2") 'winum-select-window-2)
+(define-key global-map (kbd "C-w 3") 'winum-select-window-3)
+(define-key global-map (kbd "C-w 4") 'winum-select-window-4)
+
 (define-key global-map [(meta p)] 'windmove-up)
 (define-key global-map [(meta n)] 'windmove-down)
 (define-key global-map [(meta f)] 'windmove-right)
 (define-key global-map [(meta b)] 'windmove-left)
-(define-key global-map (kbd "C-w g") 'goto-line)
+
 (define-key global-map (kbd "C-w b b") 'beginning-of-buffer)
 (define-key global-map (kbd "C-w b p") 'backward-paragraph)
 (define-key global-map (kbd "C-w b s") 'backward-sentence)
@@ -109,9 +117,16 @@
 ;;(define-key global-map [f4] 'cscope-find-this-symbol)
 
 (define-key global-map "\C-]" 'helm-cscope-find-global-definition)
+
+
 (define-key global-map "\C-t" 'helm-cscope-pop-mark)
 (define-key global-map "\C-r" 'xref-pop-marker-stack)
 
+(define-key global-map [(meta u)] 'ggtags-navigation-mode-done)
+(define-key global-map [(meta o)] 'ggtags-navigation-next-file)
+(define-key global-map [(meta i)] 'ggtags-navigation-previous-file)
+;;(define-key global-map "\C-o" 'ggtags-navigation-next-file)
+;;(define-key global-map "\C-i" 'ggtags-navigation-previous-file)
 ;;commenting with DOXYMACS
 
 ;;(define-key global-map [f5] 'doxymacs-insert-file-comment)
@@ -399,6 +414,8 @@
 (use-package hydra)
 (use-package company)
 (add-hook 'after-init-hook 'global-company-mode)
+(with-eval-after-load 'company
+  (add-to-list 'company-backends 'company-gtags))
 (use-package which-key :config (which-key-mode))
 (use-package helm-lsp)
 ;; (use-package helm
@@ -453,7 +470,7 @@
 ;; yocto
 (use-package ggtags
   :ensure t
-  :hook ((c-mode c++-mode asm-mode python-mode java-mode shell-mode bitbake-mode) . ggtags-mode)
+  :hook ((c-mode c++-mode asm-mode python-mode java-mode shell-mode bitbake-mode makefile-mode makefile-gmake-mode) . ggtags-mode))
   :config
     (setq ggtags-enable-navigation-keys nil))
 
