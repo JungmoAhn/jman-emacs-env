@@ -416,6 +416,8 @@
 (add-hook 'after-init-hook 'global-company-mode)
 (with-eval-after-load 'company
   (add-to-list 'company-backends 'company-gtags))
+(with-eval-after-load 'company
+  (setq company-backends (remove 'company-capf company-backends)))
 (use-package which-key :config (which-key-mode))
 (use-package helm-lsp)
 ;; (use-package helm
@@ -470,7 +472,7 @@
 ;; yocto
 (use-package ggtags
   :ensure t
-  :hook ((c-mode c++-mode asm-mode python-mode java-mode shell-mode bitbake-mode makefile-mode makefile-gmake-mode) . ggtags-mode))
+  :hook ((c-mode c++-mode asm-mode python-mode java-mode shell-mode bitbake-mode makefile-mode makefile-gmake-mode) . ggtags-mode)
   :config
     (setq ggtags-enable-navigation-keys nil))
 
