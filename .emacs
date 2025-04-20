@@ -101,7 +101,7 @@
 ;; (define-key global-map [f2] 'lsp-ui-peek-find-references)
 
 (define-key global-map [f1] 'grep-find)
-(define-key global-map [f2] 'cscope-find-this-symbol)
+(define-key global-map [f2] 'ggtags-grep)
 (define-key global-map [f3] 'project-fild-regexp)
 (define-key global-map [f4] 'project-find-file)
 
