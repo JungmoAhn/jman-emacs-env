@@ -102,7 +102,7 @@
 
 (define-key global-map [f1] 'grep-find)
 (define-key global-map [f2] 'cscope-find-this-symbol)
-(define-key global-map [f3] 'helm-cscope-find-this-symbol)
+(define-key global-map [f3] 'project-fild-regexp)
 (define-key global-map [f4] 'project-find-file)
 
 ;;(define-key global-map [f4] 'cscope-find-this-references)
@@ -262,7 +262,6 @@
 ;;TODO: M-x lsp-install-server
 
 ;################################ Package Settings ################################
-
 (use-package color-theme-modern)
 (load-theme 'goldenrod t t)
 (enable-theme 'goldenrod)
@@ -472,7 +471,7 @@
 ;; yocto
 (use-package ggtags
   :ensure t
-  :hook ((c-mode c++-mode asm-mode python-mode java-mode shell-mode bitbake-mode makefile-mode makefile-gmake-mode) . ggtags-mode)
+  :hook ((c-mode c++-mode asm-mode python-mode java-mode shell-mode bitbake-mode makefile-mode makefile-gmake-mode dts-mode vhdl-mode) . ggtags-mode)
   :config
     (setq ggtags-enable-navigation-keys nil))
 
