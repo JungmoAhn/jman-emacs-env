@@ -474,6 +474,7 @@
   :hook ((c-mode c++-mode asm-mode python-mode java-mode shell-mode bitbake-mode makefile-mode makefile-gmake-mode dts-mode vhdl-mode) . ggtags-mode)
   :config
     (setq ggtags-enable-navigation-keys nil))
+(setq ggtags-auto-update nil)
 
 ;;(add-hook 'after-save-hook #'ggtags-update-tags)
 (add-to-list 'auto-mode-alist '("\\.bb\\'" . python-mode))
