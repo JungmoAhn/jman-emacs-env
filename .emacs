@@ -12,7 +12,9 @@
 ;;(line-number-mode 1)
 (setq scroll-step 2)
 (setq scroll-conservatively 3)
-(global-font-lock-mode t) ;always hightlight source code
+(setq global-font-lock-mode t) ;always hightlight source code
+(global-font-lock-mode 1)
+
 (blink-cursor-mode -1) ; make cursor not blink
 (setq byte-compile-warnings '(cl-functions))
 (setenv "JAVA_HOME" "/opt/jdk-17.0.2")
@@ -179,8 +181,6 @@
     ))
 )
 
-
-
 ;;################################ Package Installing ################################
 (require 'package)
 (setq package-archives
@@ -197,7 +197,7 @@
 
 ;; List of packages you want to install
 (defvar my-packages
-   '(codegpt chatgpt orderless marginalia vertico rainbow-mode winum rustic hydra lsp-mode xcscope dash yasnippet which-key pyvenv projectile magit lsp-ui lsp-java lsp-ivy helm-xref helm-lsp helm-cscope flycheck company color-theme-modern elogcat bitbake-modes treesit-langs treesit-auto codex-cli codex-theme vterm)) ;TODO: evil-textobj-tree-sitter ts-fold
+   '(codegpt chatgpt orderless marginalia vertico rainbow-mode winum rustic hydra lsp-mode xcscope dash yasnippet which-key pyvenv projectile magit lsp-ui lsp-java lsp-ivy helm-xref helm-lsp helm-cscope flycheck company color-theme-modern elogcat bitbake-modes treesit-langs treesit-auto codex-cli codex-theme vterm vterm-toggle vterm-hotkey eshell-git-prompt eshell-toggle eshell-outline org-ai gptel gptel-magit gptel-fn-complete gptel-commit gptel-aibo chatgpt-shell chatgpt-sideline dashboard centaur-tabs all-the-icons clang-format blacken )) ;TODO: evil-textobj-tree-sitter ts-fold
 
 ;; Install packages
 (dolist (package my-packages)
@@ -227,6 +227,24 @@
                                        filename))
                 (setq indent-tabs-mode t)
                 (c-set-style "linux-tabs-only")))))
+
+(when (display-graphic-p)
+  (setq select-enable-clipboard t)
+  (setq select-enable-primary t))
+
+;; X clipboard와 연동 (xclip 사용)
+(when (executable-find "xclip")
+  (setq interprogram-cut-function
+        (lambda (text &optional push)
+          (with-temp-buffer
+            (insert text)
+            (call-process-region (point-min) (point-max) "xclip" nil 0 nil "-selection" "clipboard"))))
+
+  (setq interprogram-paste-function
+        (lambda ()
+          (let ((xclip-output (shell-command-to-string "xclip -o -selection clipboard")))
+            (unless (string= xclip-output "")
+              xclip-output)))))
 
 ;;hideshow for programming
 (load-library "hideshow")
@@ -463,6 +481,22 @@
   (add-hook 'before-save-hook 'lsp-format-buffer nil t))
 
 (use-package bitbake-modes)
+
+(dolist (hook '(prog-mode-hook
+                text-mode-hook
+                c-mode-hook
+                c++-mode-hook
+                asm-mode-hook
+                python-mode-hook
+                java-mode-hook
+                shell-mode-hook
+                bitbake-mode-hook
+                makefile-mode-hook
+                makefile-gmake-mode-hook
+                dts-mode-hook
+                vhdl-mode-hook
+                eglot-managed-mode-hook))
+  (add-hook hook #'turn-on-font-lock))
 
 ;; yocto
 (use-package ggtags
