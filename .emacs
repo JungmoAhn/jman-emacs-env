@@ -197,7 +197,7 @@
 
 ;; List of packages you want to install
 (defvar my-packages
-   '(codegpt chatgpt orderless marginalia vertico rainbow-mode winum rustic hydra lsp-mode xcscope dash yasnippet which-key pyvenv projectile magit lsp-ui lsp-java lsp-ivy helm-xref helm-lsp helm-cscope flycheck company color-theme-modern elogcat bitbake-modes treesit-langs treesit-auto codex-cli codex-theme vterm vterm-toggle vterm-hotkey eshell-git-prompt eshell-toggle eshell-outline org-ai gptel gptel-magit gptel-fn-complete gptel-commit gptel-aibo chatgpt-shell chatgpt-sideline dashboard centaur-tabs all-the-icons clang-format blacken )) ;TODO: evil-textobj-tree-sitter ts-fold
+   '(codegpt chatgpt orderless marginalia vertico rainbow-mode winum rustic hydra lsp-mode xcscope dash yasnippet which-key pyvenv projectile magit lsp-ui lsp-java lsp-ivy helm-xref helm-lsp helm-cscope flycheck company color-theme-modern elogcat bitbake-modes treesit-langs treesit-auto codex-cli codex-theme vterm vterm-toggle vterm-hotkey eshell-git-prompt eshell-toggle eshell-outline org-ai dashboard centaur-tabs all-the-icons clang-format blacken )) ;TODO: evil-textobj-tree-sitter ts-fold
 
 ;; Install packages
 (dolist (package my-packages)
@@ -353,17 +353,6 @@
   '((default :inherit (link font-lock-function-name-face) :underline nil :bold t :foreground "light goldenrod"))
   "Face for function calls."
   :group 'treesit-faces)
-
-(custom-theme-set-faces
- 'goldenrod
- '(fringe ((t (:background "dark slate blue"))))
- '(header-line ((t (:background "dark slate blue" :foreground "gray70"))))
- '(menu ((t (:background "dark slate blue" :foreground "lemon chiffon"))))
- '(mode-line ((t (:background "dark slate blue" :foreground "lemon chiffon"
-                 :box (:line-width 1 :style released-button)))))
- '(tool-bar ((t (:background "dark slate blue" :foreground "lemon chiffon"
-                 :box (:line-width 1 :style released-button)))))
- )
 
 (add-hook 'eglot-managed-mode-hook (lambda ()
                                      (treesit-hl-toggle t))) ; Enable Treesitter highlighting
