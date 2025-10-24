@@ -531,5 +531,7 @@
 ;ChatGPT
 (use-package codex-cli)
 
+(global-set-key (kbd "C-r") 'isearch-backward)  
+
 ;(use-package chatgpt :ensure t)
 ;(use-package codegpt :ensure t)
