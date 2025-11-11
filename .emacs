@@ -37,6 +37,11 @@
 (define-key global-map (kbd "RET") 'newline-and-indent)
 (define-key global-map (kbd "C-`") 'delete-backward-char)
 
+(with-eval-after-load 'xref
+  (define-key xref--xref-buffer-mode-map (kbd "M-p") 'xref-go-back)
+  (define-key xref--xref-buffer-mode-map (kbd "M-n") 'xref-go-forward))
+
+
 ;; org
 (define-key global-map (kbd "C-c o r") 'org-redisplay-inline-images)
 
@@ -500,6 +505,8 @@
 (add-to-list 'auto-mode-alist '("\\.bbclass\\'" . python-mode))
 (add-to-list 'auto-mode-alist '("\\.inc\\'" . python-mode))
 (add-to-list 'auto-mode-alist '("\\.conf\\'" . python-mode))
+
+
 ;;Projectile
 
 ;; (use-package projectile
@@ -530,8 +537,105 @@
 
 ;ChatGPT
 (use-package codex-cli)
-
-(global-set-key (kbd "C-r") 'isearch-backward)  
+(global-set-key (kbd "C-r") 'isearch-backward)
 
 ;(use-package chatgpt :ensure t)
 ;(use-package codegpt :ensure t)
+
+
+;;; ============================================
+;;; Emacs: ggtags + ctags (etags) 병행 설정
+;;; ============================================
+(use-package consult
+  :ensure t
+  :bind (("C-s" . consult-line)
+         ("M-g g" . consult-goto-line)
+         ("M-g i" . consult-imenu)
+         ("M-g M-g" . consult-goto-line)
+         ("C-c s" . consult-ripgrep)))
+
+;;(use-package consult-xref
+;;  :ensure t
+;;  :after (consult)
+;;  :config
+;;  (setq xref-show-xrefs-function #'consult-xref
+;        xref-show-definitions-function #'consult-xref))
+
+(with-eval-after-load 'consult
+  (setq xref-show-xrefs-function #'consult-xref
+        xref-show-definitions-function #'consult-xref))
+
+
+;; etags (ctags)
+(use-package etags
+  :ensure nil
+  :config
+  (setq tags-revert-without-query t))
+
+(with-eval-after-load 'projectile
+  (setq projectile-tags-command "ctags -e -R .")
+  (add-hook 'projectile-after-switch-project-hook
+            (lambda ()
+              (let ((root (projectile-project-root)))
+                (when (file-exists-p (expand-file-name "TAGS" root))
+                  (visit-tags-table (expand-file-name "TAGS" root)))))))
+
+
+(defun my/find-tags-upwards (dir)
+  "현재 디렉토리부터 상위로 올라가며 TAGS 파일을 탐색."
+  (let ((parent (file-name-directory (directory-file-name dir))))
+    (cond
+     ((file-exists-p (expand-file-name "TAGS" dir))
+      (expand-file-name "TAGS" dir))
+     ((or (null parent) (string= dir parent))
+      nil)
+     (t (my/find-tags-upwards parent)))))
+
+(defun my/load-nearest-tags ()
+  "가장 가까운 상위 TAGS를 자동으로 로드."
+  (let ((tags-file (my/find-tags-upwards default-directory)))
+    (when tags-file
+      (visit-tags-table tags-file)
+      (message "Loaded TAGS from: %s" tags-file))))
+
+(add-hook 'find-file-hook #'my/load-nearest-tags)
+
+
+(defun my-xref-etags-find-definitions ()
+  "Force xref to use ctags (etags) backend for jump."
+  (interactive)
+  (let ((xref-backend-functions '(etags--xref-backend)))
+    (call-interactively #'xref-find-definitions)))
+
+(global-set-key (kbd "C-]") 'my-xref-etags-find-definitions)
+
+(defun my/generate-tags ()
+  "create ctags & gtags."
+  (interactive)
+  (let ((default-directory (read-directory-name "directory to create G/TAGS: ")))
+    (shell-command "/usr/bin/ctags -e -R .")
+    (shell-command "gtags -c")
+    (visit-tags-table (expand-file-name "TAGS" default-directory))
+    (message "TAGS 파일 생성 완료: %s" (expand-file-name "TAGS" default-directory))))
+(global-set-key (kbd "C-c t") #'my/generate-tags)
+
+
+
+;; xref 백엔드 우선순위: ggtags -> etags
+(setq xref-backend-functions
+      '(ggtags-xref-backend
+        etags--xref-backend
+        xref--xref-backend))
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages nil))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
