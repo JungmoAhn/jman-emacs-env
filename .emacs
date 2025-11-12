@@ -614,22 +614,42 @@
 (global-set-key (kbd "C-c t") #'my/generate-tags)
 
 (define-key global-map "\C-]" 'helm-cscope-find-global-definition)
-(define-key global-map "\C-r" 'xref-pop-marker-stack)
+(define-key global-map "\C-r" 'helm-cscope-pop-mark)
 
 (setq xref-backend-functions
       '(ggtags-xref-backend
         etags--xref-backend
         xref--xref-backend))
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages nil))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+;; 커서가 화면을 벗어나지 않도록 부드럽게 스크롤
+(setq scroll-step 1)
+(setq scroll-conservatively 101)
+(setq scroll-margin 2)
+(setq scroll-preserve-screen-position t)
+
+(defun scroll-half-page-down-center ()
+  "커서를 중앙에 유지하면서 반페이지 아래로 스크롤."
+  (interactive)
+  (scroll-up-command (/ (window-body-height) 2))
+  (recenter))
+
+(defun scroll-half-page-up-center ()
+  "커서를 중앙에 유지하면서 반페이지 위로 스크롤."
+  (interactive)
+  (scroll-down-command (/ (window-body-height) 2))
+  (recenter))
+
+;; 키 바인딩 (기존 C-v, M-v 대체)
+(global-set-key (kbd "C-v") 'scroll-half-page-down-center)
+(global-set-key (kbd "M-v") 'scroll-half-page-up-center)
+
+(defun scroll-up-6-lines ()
+  (interactive)
+  (dotimes (_ 6) (scroll-up-line)))
+
+(defun scroll-down-6-lines ()
+  (interactive)
+  (dotimes (_ 6) (scroll-down-line)))
+
+(global-set-key (kbd "C-w") 'scroll-up-6-lines)
+(global-set-key (kbd "C-q") 'scroll-down-6-lines)
