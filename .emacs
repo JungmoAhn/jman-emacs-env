@@ -107,25 +107,15 @@
 ;; (define-key global-map [f1] 'lsp-ui-peek-find-definitions)
 ;; (define-key global-map [f2] 'lsp-ui-peek-find-references)
 
-(define-key global-map [f1] 'helm-grep-do-git-grep)
-(define-key global-map [f2] 'ggtags-find-files)
-
 ;;(define-key global-map [f4] 'cscope-find-this-references)
 ;;(define-key global-map [f4] 'lsp-ivy-global-workspace-symbol)
 (define-key global-map [f5] 'lsp-mode)
 (define-key global-map [f6] 'lsp-describe-session)
-(define-key global-map [f7] 'treemacs-edit-workspaces)
 ;;(global-set-key [f6] 'find-file-in-repository)
 ;;(define-key global-map [f7] 'grep-find)
 ;;(define-key global-map [f8] 'project-shell)
 (define-key global-map [f12] 'whitespace-cleanup)
 ;;(define-key global-map [f4] 'cscope-find-this-symbol)
-
-(define-key global-map [(meta u)] 'ggtags-navigation-mode-done)
-(define-key global-map [(meta o)] 'ggtags-navigation-next-file)
-(define-key global-map [(meta i)] 'ggtags-navigation-previous-file)
-;;(define-key global-map "\C-o" 'ggtags-navigation-next-file)
-;;(define-key global-map "\C-i" 'ggtags-navigation-previous-file)
 ;;commenting with DOXYMACS
 
 ;;(define-key global-map [f5] 'doxymacs-insert-file-comment)
@@ -134,12 +124,6 @@
 ;;(define-key global-map [f8] 'comment-or-uncomment-region)
 
 ;;################################ magit ################################
-
-(define-key global-map [f9] 'magit-status)
-(define-key global-map [f10] 'magit-show-refs)
-(define-key global-map [f11] 'magit-log)
-;;(define-key global-map [f12] 'magit-remote-config-popup)
-
 ;;(define-key global-map [(meta 9)] 'windmove-up)
 ;;(define-key global-map [(meta 0)] 'windmove-up)
 
@@ -487,7 +471,7 @@
 ;; yocto
 (use-package ggtags
   :ensure t
-  :hook ((c-mode c++-mode asm-mode python-mode java-mode shell-mode bitbake-mode makefile-mode makefile-gmake-mode dts-mode vhdl-mode) . ggtags-mode)
+  :hook ((c-mode c++-mode asm-mode python-mode java-mode shell-mode bitbake-mode makefile-mode makefile-gmake-mode dts-mode vhdl-mode eshell-mode) . ggtags-mode)
   :config
     (setq ggtags-enable-navigation-keys nil))
 (setq ggtags-auto-update nil)
@@ -529,7 +513,6 @@
 
 ;ChatGPT
 (use-package codex-cli)
-(global-set-key (kbd "C-r") 'isearch-backward)
 
 ;(use-package chatgpt :ensure t)
 ;(use-package codegpt :ensure t)
@@ -583,3 +566,43 @@
 
 (global-set-key (kbd "C-v") #'scroll-half-page-down-center)
 (global-set-key (kbd "M-v") #'scroll-half-page-up-center)
+
+(defun my/helm-grep-do-git-grep-at-gtags-root ()
+  "GTAGS 파일이 있으면 그 디렉터리에서 helm-grep-do-git-grep 실행.
+없으면 기본 Git 루트에서 실행."
+  (interactive)
+  (require 'ggtags nil t)
+  (let* ((gtags-root
+          (or (locate-dominating-file default-directory "GTAGS")
+              (locate-dominating-file default-directory ".git")
+              default-directory)))
+    (let ((default-directory gtags-root))
+      (message "🔍 helm-grep-do-git-grep @ %s" default-directory)
+      (call-interactively #'helm-grep-do-git-grep))))
+
+(global-set-key (kbd "C-c M-]") #'my/helm-grep-do-git-grep-at-gtags-root)
+
+(defun my/ggtags-grep-auto ()
+  "현재 커서 심볼로 ggtags-grep 실행 (묻지 않음)."
+  (interactive)
+  (let ((symbol (thing-at-point 'symbol t)))
+    (when symbol
+      (ggtags-grep symbol))))
+(global-set-key (kbd "C-c M-.") #'my/ggtags-grep-auto)
+
+(defun my/ggtags-find-reference-auto ()
+  "현재 커서 심볼로 `ggtags-find-reference` 실행 (묻지 않음)."
+  (interactive)
+  (let ((symbol (thing-at-point 'symbol t)))
+    (if symbol
+        (ggtags-find-reference symbol)
+      (call-interactively #'ggtags-find-reference))))  ;; 커서 아래 심볼 없을 때만 직접 입력
+(global-set-key (kbd "C-c M-r") #'my/ggtags-find-reference-auto)
+
+
+(global-set-key (kbd "C-c 1") #'treemacs-select-window)
+(global-set-key (kbd "C-c 2") #'treemacs-switch-workspace)
+(global-set-key (kbd "C-c 3") #'treemacs-edit-workspaces)
+(global-set-key (kbd "C-c m") #'magit-status)
+(global-set-key (kbd "C-c 0") #'magit-show-refs)
+(global-set-key (kbd "C-c f") #'project-find-file)
