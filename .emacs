@@ -123,12 +123,6 @@
 (define-key global-map [f12] 'whitespace-cleanup)
 ;;(define-key global-map [f4] 'cscope-find-this-symbol)
 
-(define-key global-map "\C-]" 'helm-cscope-find-global-definition)
-
-
-(define-key global-map "\C-t" 'helm-cscope-pop-mark)
-(define-key global-map "\C-r" 'xref-pop-marker-stack)
-
 (define-key global-map [(meta u)] 'ggtags-navigation-mode-done)
 (define-key global-map [(meta o)] 'ggtags-navigation-next-file)
 (define-key global-map [(meta i)] 'ggtags-navigation-previous-file)
@@ -619,9 +613,9 @@
     (message "TAGS 파일 생성 완료: %s" (expand-file-name "TAGS" default-directory))))
 (global-set-key (kbd "C-c t") #'my/generate-tags)
 
+(define-key global-map "\C-]" 'helm-cscope-find-global-definition)
+(define-key global-map "\C-r" 'xref-pop-marker-stack)
 
-
-;; xref 백엔드 우선순위: ggtags -> etags
 (setq xref-backend-functions
       '(ggtags-xref-backend
         etags--xref-backend
