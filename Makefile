@@ -57,6 +57,9 @@ emacs-dep:
 	sudo python setup.py install;
 	echo "export GTAGSLABEL=pygments" >> ~/.bashrc
 	sudo cp /etc/gtags/gtags.conf ~/.globalrc
+	#for ctags
+	sed -i 's/tc=exuberant-ctags:tc=htags/tc=universal-ctags:tc=htags/' ~/.globalrc
+
 	echo "export GTAGSCONF=~/.globalrc" >> ~/.bashrc
 	sed -i "s/:tc=native:/:tc=native:tc=pygments:/" ~/.globalrc
 	sed -i '/:gtags_parser=C#\\:$pygmentslib:\\/i \\t:gtags_parser=Bitbake\\:$pygmentslib:\\' ~/.globalrc

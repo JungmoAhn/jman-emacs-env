@@ -534,10 +534,6 @@
 ;(use-package chatgpt :ensure t)
 ;(use-package codegpt :ensure t)
 
-
-;;; ============================================
-;;; Emacs: ggtags + ctags (etags) 병행 설정
-;;; ============================================
 (use-package consult
   :ensure t
   :bind (("C-s" . consult-line)
@@ -546,82 +542,22 @@
          ("M-g M-g" . consult-goto-line)
          ("C-c s" . consult-ripgrep)))
 
-;;(use-package consult-xref
-;;  :ensure t
-;;  :after (consult)
-;;  :config
-;;  (setq xref-show-xrefs-function #'consult-xref
-;        xref-show-definitions-function #'consult-xref))
-
 (with-eval-after-load 'consult
   (setq xref-show-xrefs-function #'consult-xref
         xref-show-definitions-function #'consult-xref))
 
 
-;; etags (ctags)
-(use-package etags
-  :ensure nil
-  :config
-  (setq tags-revert-without-query t))
-
-(with-eval-after-load 'projectile
-  (setq projectile-tags-command "ctags -e -R .")
-  (add-hook 'projectile-after-switch-project-hook
-            (lambda ()
-              (let ((root (projectile-project-root)))
-                (when (file-exists-p (expand-file-name "TAGS" root))
-                  (visit-tags-table (expand-file-name "TAGS" root)))))))
-
-
-(defun my/find-tags-upwards (dir)
-  "현재 디렉토리부터 상위로 올라가며 TAGS 파일을 탐색."
-  (let ((parent (file-name-directory (directory-file-name dir))))
-    (cond
-     ((file-exists-p (expand-file-name "TAGS" dir))
-      (expand-file-name "TAGS" dir))
-     ((or (null parent) (string= dir parent))
-      nil)
-     (t (my/find-tags-upwards parent)))))
-
-(defun my/load-nearest-tags ()
-  "가장 가까운 상위 TAGS를 자동으로 로드."
-  (let ((tags-file (my/find-tags-upwards default-directory)))
-    (when tags-file
-      (visit-tags-table tags-file)
-      (message "Loaded TAGS from: %s" tags-file))))
-
-(add-hook 'find-file-hook #'my/load-nearest-tags)
-
 (defun my/generate-tags ()
-  "create ctags & gtags."
+  "create gtags."
   (interactive)
-  (let ((default-directory (read-directory-name "directory to create G/TAGS: ")))
-    (shell-command "/usr/bin/ctags -e -R .")
-    (shell-command "gtags -c")
-    (visit-tags-table (expand-file-name "TAGS" default-directory))
-    (message "TAGS 파일 생성 완료: %s" (expand-file-name "TAGS" default-directory))))
+  (let ((default-directory (read-directory-name "directory to create GTAGS: ")))
+    (shell-command "gtags --gtagslabel=ctags")
 (global-set-key (kbd "C-c t") #'my/generate-tags)
 
-(defun my/helm-cscope-def-center ()
-  "helm-cscope로 정의 점프 후 화면을 중앙으로 맞춘다."
-  (interactive)
-  (call-interactively 'helm-cscope-find-global-definition)
-  ;; 점프가 완료된 다음 틱에 실행되도록 지연
-  (run-at-time 0 nil #'recenter))
-
-(global-set-key (kbd "C-]") #'my/helm-cscope-def-center)
-(define-key global-map "\C-r" 'helm-cscope-pop-mark)
-
-(setq xref-backend-functions
-      '(ggtags-xref-backend
-        etags--xref-backend
-        xref--xref-backend))
-
-;; 커서가 화면을 벗어나지 않도록 부드럽게 스크롤
-(setq scroll-step 1)
-(setq scroll-conservatively 101)
-(setq scroll-margin 2)
-(setq scroll-preserve-screen-position t)
+(dolist (cmd '(ggtags-find-tag-dwim
+               ggtags-find-tag-other-window
+               xref-find-definitions))
+  (advice-add cmd :after (lambda (&rest _) (recenter))))
 
 (defun scroll-half-page-down-center ()
   "커서를 중앙에 유지하면서 반페이지 아래로 스크롤."
