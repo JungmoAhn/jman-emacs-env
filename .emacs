@@ -546,12 +546,12 @@
   (setq xref-show-xrefs-function #'consult-xref
         xref-show-definitions-function #'consult-xref))
 
-
 (defun my/generate-tags ()
-  "create gtags."
+  "현재 디렉터리(또는 선택한 디렉터리)에서 gtags만 생성."
   (interactive)
-  (let ((default-directory (read-directory-name "directory to create GTAGS: ")))
+  (let ((default-directory (read-directory-name "Gtags 생성할 디렉터리: ")))
     (shell-command "gtags --gtagslabel=ctags")
+    (message "✅ GTAGS 생성 완료: %s" (expand-file-name "GTAGS" default-directory))))
 (global-set-key (kbd "C-c t") #'my/generate-tags)
 
 (dolist (cmd '(ggtags-find-tag-dwim
@@ -560,17 +560,26 @@
   (advice-add cmd :after (lambda (&rest _) (recenter))))
 
 (defun scroll-half-page-down-center ()
-  "커서를 중앙에 유지하면서 반페이지 아래로 스크롤."
+  "화면을 반 페이지 아래로 스크롤하고 커서를 중앙에 위치시킨다."
   (interactive)
-  (scroll-up-command (/ (window-body-height) 2))
-  (recenter))
+  (let ((lines (/ (window-body-height) 2)))
+    ;; 반 페이지 스크롤
+    (scroll-up lines)
+    ;; 커서를 현재 창의 중간 위치로 이동
+    (goto-char (window-start))
+    (forward-line (/ (window-body-height) 2))
+    (recenter)))
 
 (defun scroll-half-page-up-center ()
-  "커서를 중앙에 유지하면서 반페이지 위로 스크롤."
+  "화면을 반 페이지 위로 스크롤하고 커서를 중앙에 위치시킨다."
   (interactive)
-  (scroll-down-command (/ (window-body-height) 2))
-  (recenter))
+  (let ((lines (/ (window-body-height) 2)))
+    ;; 반 페이지 스크롤
+    (scroll-down lines)
+    ;; 커서를 현재 창의 중간 위치로 이동
+    (goto-char (window-start))
+    (forward-line (/ (window-body-height) 2))
+    (recenter)))
 
-;; 키 바인딩 (기존 C-v, M-v 대체)
-(global-set-key (kbd "C-v") 'scroll-half-page-down-center)
-(global-set-key (kbd "M-v") 'scroll-half-page-up-center)
+(global-set-key (kbd "C-v") #'scroll-half-page-down-center)
+(global-set-key (kbd "M-v") #'scroll-half-page-up-center)
