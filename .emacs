@@ -107,10 +107,8 @@
 ;; (define-key global-map [f1] 'lsp-ui-peek-find-definitions)
 ;; (define-key global-map [f2] 'lsp-ui-peek-find-references)
 
-(define-key global-map [f1] 'grep-find)
-(define-key global-map [f2] 'ggtags-grep)
-(define-key global-map [f3] 'project-fild-regexp)
-(define-key global-map [f4] 'project-find-file)
+(define-key global-map [f1] 'helm-grep-do-git-grep)
+(define-key global-map [f2] 'ggtags-find-files)
 
 ;;(define-key global-map [f4] 'cscope-find-this-references)
 ;;(define-key global-map [f4] 'lsp-ivy-global-workspace-symbol)
@@ -594,15 +592,6 @@
 
 (add-hook 'find-file-hook #'my/load-nearest-tags)
 
-
-(defun my-xref-etags-find-definitions ()
-  "Force xref to use ctags (etags) backend for jump."
-  (interactive)
-  (let ((xref-backend-functions '(etags--xref-backend)))
-    (call-interactively #'xref-find-definitions)))
-
-(global-set-key (kbd "C-]") 'my-xref-etags-find-definitions)
-
 (defun my/generate-tags ()
   "create ctags & gtags."
   (interactive)
@@ -613,7 +602,14 @@
     (message "TAGS 파일 생성 완료: %s" (expand-file-name "TAGS" default-directory))))
 (global-set-key (kbd "C-c t") #'my/generate-tags)
 
-(define-key global-map "\C-]" 'helm-cscope-find-global-definition)
+(defun my/helm-cscope-def-center ()
+  "helm-cscope로 정의 점프 후 화면을 중앙으로 맞춘다."
+  (interactive)
+  (call-interactively 'helm-cscope-find-global-definition)
+  ;; 점프가 완료된 다음 틱에 실행되도록 지연
+  (run-at-time 0 nil #'recenter))
+
+(global-set-key (kbd "C-]") #'my/helm-cscope-def-center)
 (define-key global-map "\C-r" 'helm-cscope-pop-mark)
 
 (setq xref-backend-functions
@@ -642,14 +638,3 @@
 ;; 키 바인딩 (기존 C-v, M-v 대체)
 (global-set-key (kbd "C-v") 'scroll-half-page-down-center)
 (global-set-key (kbd "M-v") 'scroll-half-page-up-center)
-
-(defun scroll-up-6-lines ()
-  (interactive)
-  (dotimes (_ 6) (scroll-up-line)))
-
-(defun scroll-down-6-lines ()
-  (interactive)
-  (dotimes (_ 6) (scroll-down-line)))
-
-(global-set-key (kbd "C-w") 'scroll-up-6-lines)
-(global-set-key (kbd "C-q") 'scroll-down-6-lines)
