@@ -543,29 +543,27 @@
   (advice-add cmd :after (lambda (&rest _) (recenter))))
 
 (defun scroll-half-page-down-center ()
-  "화면을 반 페이지 아래로 스크롤하고 커서를 중앙에 위치시킨다."
+  "반 페이지 아래로 스크롤하고 중앙 정렬."
   (interactive)
-  (let ((lines (/ (window-body-height) 2)))
-    ;; 반 페이지 스크롤
-    (scroll-up lines)
-    ;; 커서를 현재 창의 중간 위치로 이동
+  (let* ((h (window-body-height))
+         (lines (/ h 2)))
     (goto-char (window-start))
-    (forward-line (/ (window-body-height) 2))
+    (forward-line lines)
     (recenter)))
 
 (defun scroll-half-page-up-center ()
-  "화면을 반 페이지 위로 스크롤하고 커서를 중앙에 위치시킨다."
+  "반 페이지 위로 스크롤하고 중앙 정렬."
   (interactive)
-  (let ((lines (/ (window-body-height) 2)))
-    ;; 반 페이지 스크롤
-    (scroll-down lines)
-    ;; 커서를 현재 창의 중간 위치로 이동
+  (let* ((h (window-body-height))
+         (lines (/ h 2)))
     (goto-char (window-start))
-    (forward-line (/ (window-body-height) 2))
+    (forward-line (- lines))
     (recenter)))
 
-(global-set-key (kbd "C-v") #'scroll-half-page-down-center)
-(global-set-key (kbd "M-v") #'scroll-half-page-up-center)
+(with-eval-after-load 'evil
+  ;; Evil NORMAL state에서 C-v / M-v 동작 재정의
+  (define-key evil-normal-state-map (kbd "C-v") #'scroll-half-page-down-center)
+  (define-key evil-normal-state-map (kbd "M-v") #'scroll-half-page-up-center))
 
 (defun my/helm-grep-do-git-grep-at-gtags-root ()
   "GTAGS 파일이 있으면 그 디렉터리에서 helm-grep-do-git-grep 실행.
@@ -598,11 +596,3 @@
         (ggtags-find-reference symbol)
       (call-interactively #'ggtags-find-reference))))  ;; 커서 아래 심볼 없을 때만 직접 입력
 (global-set-key (kbd "C-c M-r") #'my/ggtags-find-reference-auto)
-
-
-(global-set-key (kbd "C-c 1") #'treemacs-select-window)
-(global-set-key (kbd "C-c 2") #'treemacs-switch-workspace)
-(global-set-key (kbd "C-c 3") #'treemacs-edit-workspaces)
-(global-set-key (kbd "C-c m") #'magit-status)
-(global-set-key (kbd "C-c 0") #'magit-show-refs)
-(global-set-key (kbd "C-c f") #'project-find-file)
