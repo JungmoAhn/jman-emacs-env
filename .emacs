@@ -596,3 +596,20 @@
         (ggtags-find-reference symbol)
       (call-interactively #'ggtags-find-reference))))  ;; 커서 아래 심볼 없을 때만 직접 입력
 (global-set-key (kbd "C-c M-r") #'my/ggtags-find-reference-auto)
+
+(global-set-key (kbd "C-c 1") #'treemacs-select-window)
+(global-set-key (kbd "C-c 2") #'treemacs-switch-workspace)
+(global-set-key (kbd "C-c 3") #'treemacs-edit-workspaces)
+(global-set-key (kbd "C-c m") #'magit-status)
+(global-set-key (kbd "C-c 0") #'magit-show-refs)
+(global-set-key (kbd "C-c f") #'project-find-file)
+
+;; M-x compile  -> create png file building dot file
+(use-package graphviz-dot-mode
+  :ensure t
+  :mode ("\\.dot\\'" . graphviz-dot-mode))
+
+;; graphviz-dot-mode 설치돼 있다고 가정
+(autoload 'graphviz-dot-mode "graphviz-dot-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.dot\\'" . graphviz-dot-mode))
+(add-to-list 'auto-mode-alist '("\\.gv\\'"  . graphviz-dot-mode))
