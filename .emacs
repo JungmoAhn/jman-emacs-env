@@ -128,49 +128,46 @@
 ;;(define-key global-map [(meta 0)] 'windmove-up)
 
 ;; pin a window
-(defun toggle-window-dedicated ();; Toggle window dedication
-"Toggle whether the current active window is dedicated or not"
-
-(interactive)
-(message
- (if (let (window (get-buffer-window (current-buffer)))
-       (set-window-dedicated-p window
-        (not (window-dedicated-p window))))
-    "Window '%s' is dedicated"
-    "Window '%s' is normal")
- (current-buffer)))
+(defun toggle-window-dedicated ()
+  "Toggle whether the current active window is dedicated or not."
+  (interactive)
+  (message
+   (if (let ((window (get-buffer-window (current-buffer))))
+         (set-window-dedicated-p window (not (window-dedicated-p window))))
+       "Window '%s' is dedicated"
+     "Window '%s' is normal")
+   (current-buffer)))
 
 ;;map key 'e' in cscope-buffer
 (defun cscope-select-entry-edit1-window ()
   "Display the entry at point in a edit1 window, select the window."
   (interactive)
-    (let* ((edit-win-list (ecb-canonical-edit-windows-list))
-           (edit-win (or (and (not 1)
-                              (car edit-win-list))
-                         (and 1
-                              (> 1 0)
-                              (<= 1 (length edit-win-list))
-                              (nth (1- 1) edit-win-list))
-                         (and (> (length edit-win-list) 1)
-                              (nth 1 edit-win-list))
-                         (car edit-win-list))))  
-  (let ((file (get-text-property (point) 'cscope-file))
-	(line-number (get-text-property (point) 'cscope-line-number)))
-    (setq edit-win (cscope-show-entry-internal file line-number t edit-win))
-    (if (windowp edit-win)
-	  (select-window edit-win))
-    ))
-)
+  (let* ((edit-win-list (ecb-canonical-edit-windows-list))
+         (edit-win (or (and (not 1)
+                            (car edit-win-list))
+                       (and 1
+                            (> 1 0)
+                            (<= 1 (length edit-win-list))
+                            (nth (1- 1) edit-win-list))
+                       (and (> (length edit-win-list) 1)
+                            (nth 1 edit-win-list))
+                       (car edit-win-list))))
+    (let ((file (get-text-property (point) 'cscope-file))
+          (line-number (get-text-property (point) 'cscope-line-number)))
+      (setq edit-win (cscope-show-entry-internal file line-number t edit-win))
+      (when (windowp edit-win)
+        (select-window edit-win)))))
 
 ;;################################ Package Installing ################################
 (require 'package)
 (setq package-archives
-      '(("gnu" . "https://elpa.gnu.org/packages/")
-        ("melpa" . "https://melpa.org/packages/")
-        ("onpa" . "https://olanilsson.bitbucket.io/packages/")
+      '(("gnu"       . "https://elpa.gnu.org/packages/")
+	("nongnu"    . "https://elpa.nongnu.org/nongnu/")
+        ("melpa"     . "https://melpa.org/packages/")
+        ("onpa"      . "https://olanilsson.bitbucket.io/packages/")
         ("gnu-devel" . "https://elpa.gnu.org/devel/")
-	( "jcs-elpa" . "https://jcs-emacs.github.io/jcs-elpa/packages/")
-        ("onpa" . "https://olanilsson.bitbucket.io/packages/")))  ;for bitbake
+	("jcs-elpa"  . "https://jcs-emacs.github.io/jcs-elpa/packages/")
+        ("onpa"      . "https://olanilsson.bitbucket.io/packages/")))  ;for bitbake
 
 ;(add-to-list 'package-archives '( "jcs-elpa" . "https://jcs-emacs.github.io/jcs-elpa/packages/") t)
 ;(package-refresh-contents))
@@ -178,7 +175,13 @@
 
 ;; List of packages you want to install
 (defvar my-packages
-   '(codegpt chatgpt orderless marginalia vertico rainbow-mode winum rustic hydra lsp-mode xcscope dash yasnippet which-key pyvenv projectile magit lsp-ui lsp-java lsp-ivy helm-xref helm-lsp helm-cscope flycheck company color-theme-modern elogcat bitbake-modes treesit-langs treesit-auto codex-cli codex-theme vterm vterm-toggle vterm-hotkey eshell-git-prompt eshell-toggle eshell-outline org-ai dashboard centaur-tabs all-the-icons clang-format blacken )) ;TODO: evil-textobj-tree-sitter ts-fold
+  '(codegpt chatgpt orderless marginalia vertico rainbow-mode winum rustic hydra
+    lsp-mode xcscope dash yasnippet which-key pyvenv projectile magit lsp-ui
+    lsp-java lsp-ivy helm helm-xref helm-lsp helm-cscope helm-gtags flycheck company
+    color-theme-modern elogcat bitbake-modes treesit-langs treesit-auto codex-cli gptel
+    codex-theme vterm vterm-toggle vterm-hotkey eshell-git-prompt eshell-toggle
+    eshell-outline org-ai dashboard centaur-tabs all-the-icons clang-format
+    blacken)) ; TODO: evil-textobj-tree-sitter ts-fold
 
 ;; Install packages
 (dolist (package my-packages)
@@ -264,6 +267,14 @@
 (use-package xcscope)
 (use-package helm-xref)
 (use-package helm-cscope)
+(use-package helm
+  :ensure t
+  :config
+  (helm-mode))
+(use-package helm-gtags
+  :ensure t)
+(use-package gptel
+  :ensure t)
 ;;(require 'linum-relative)
 
 ;; source contol settings
@@ -294,41 +305,41 @@
       '(("." . "~/.emacs.d/backups")))
 
 (use-package winum
-   :ensure t
-   :config
-	 (global-set-key (kbd "M-0") 'treemcas-select-window)
-	 (global-set-key (kbd "M-1") 'winum-select-window-1)
-	 (global-set-key (kbd "M-2") 'winum-select-window-2)
-	 (global-set-key (kbd "M-3") 'winum-select-window-3)
-	 (global-set-key (kbd "M-4") 'winum-select-window-4)
-	 (global-set-key (kbd "M-5") 'winum-select-window-5)
-	 (global-set-key (kbd "M-6") 'winum-select-window-6)
-	 (global-set-key (kbd "M-7") 'winum-select-window-7)
-	 (global-set-key (kbd "M-8") 'winum-select-window-8)
-   (winum-mode))
+  :ensure t
+  :config
+  (global-set-key (kbd "M-0") 'treemcas-select-window)
+  (global-set-key (kbd "M-1") 'winum-select-window-1)
+  (global-set-key (kbd "M-2") 'winum-select-window-2)
+  (global-set-key (kbd "M-3") 'winum-select-window-3)
+  (global-set-key (kbd "M-4") 'winum-select-window-4)
+  (global-set-key (kbd "M-5") 'winum-select-window-5)
+  (global-set-key (kbd "M-6") 'winum-select-window-6)
+  (global-set-key (kbd "M-7") 'winum-select-window-7)
+  (global-set-key (kbd "M-8") 'winum-select-window-8)
+  (winum-mode))
 
 ;; tree-sitter
 
 (setq treesit-language-source-alist
-   '((bash "https://github.com/tree-sitter/tree-sitter-bash")
-     (cmake "https://github.com/uyha/tree-sitter-cmake")
-     (css "https://github.com/tree-sitter/tree-sitter-css")
-     (elisp "https://github.com/Wilfred/tree-sitter-elisp")
-     (go "https://github.com/tree-sitter/tree-sitter-go")
-     (html "https://github.com/tree-sitter/tree-sitter-html")
-     (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
-     (json "https://github.com/tree-sitter/tree-sitter-json")
-     (make "https://github.com/alemuller/tree-sitter-make")
-     (markdown "https://github.com/ikatyang/tree-sitter-markdown")
-     (python "https://github.com/tree-sitter/tree-sitter-python")
-     (toml "https://github.com/tree-sitter/tree-sitter-toml")
-     (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
-     (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
-     (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
+      '((bash "https://github.com/tree-sitter/tree-sitter-bash")
+        (cmake "https://github.com/uyha/tree-sitter-cmake")
+        (css "https://github.com/tree-sitter/tree-sitter-css")
+        (elisp "https://github.com/Wilfred/tree-sitter-elisp")
+        (go "https://github.com/tree-sitter/tree-sitter-go")
+        (html "https://github.com/tree-sitter/tree-sitter-html")
+        (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
+        (json "https://github.com/tree-sitter/tree-sitter-json")
+        (make "https://github.com/alemuller/tree-sitter-make")
+        (markdown "https://github.com/ikatyang/tree-sitter-markdown")
+        (python "https://github.com/tree-sitter/tree-sitter-python")
+        (toml "https://github.com/tree-sitter/tree-sitter-toml")
+        (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
+        (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
+        (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
 
 (setq major-mode-remap-alist
- '((yaml-mode . yaml-ts-mode)
-   (bash-mode . bash-ts-mode)))
+      '((yaml-mode . yaml-ts-mode)
+        (bash-mode . bash-ts-mode)))
 
 (defface treesit-face-function.call
   '((default :inherit (link font-lock-function-name-face) :underline nil :bold t :foreground "light goldenrod"))
@@ -613,3 +624,67 @@
 (autoload 'graphviz-dot-mode "graphviz-dot-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.dot\\'" . graphviz-dot-mode))
 (add-to-list 'auto-mode-alist '("\\.gv\\'"  . graphviz-dot-mode))
+
+(use-package monet
+  :vc (:url "https://github.com/stevemolitor/monet" :rev :newest))
+
+;; install required inheritenv dependency:
+(use-package inheritenv
+  :vc (:url "https://github.com/purcell/inheritenv" :rev :newest))
+
+;; for eat terminal backend:
+(use-package eat :ensure t)
+
+;; for vterm terminal backend:
+(use-package vterm :ensure t)
+
+;; install claude-code.el
+(use-package claude-code :ensure t
+  :vc (:url "https://github.com/stevemolitor/claude-code.el" :rev :newest)
+  :config
+  ;; optional IDE integration with Monet
+  (add-hook 'claude-code-process-environment-functions #'monet-start-server-function)
+  (monet-mode 1)
+
+  (claude-code-mode)
+  :bind-keymap ("C-c c" . claude-code-command-map)
+
+  ;; Optionally define a repeat map so that "M" will cycle thru Claude auto-accept/plan/confirm modes after invoking claude-code-cycle-mode / C-c M.
+  :bind
+  (:repeat-map my-claude-code-map ("M" . claude-code-cycle-mode)))
+
+(use-package claude-code-ide
+  :vc (:url "https://github.com/manzaltu/claude-code-ide.el" :rev :newest))
+
+(use-package ai-code-interface
+  :vc (:url "https://github.com/tninja/ai-code-interface.el" :rev :newest)
+  :demand t
+  :config
+  (require 'ai-code-codex-cli)
+  (ai-code-set-backend 'codex) ;; default to OpenAI Codex CLI backend
+  ;; Enable global keybinding for the main menu
+  (global-set-key (kbd "C-c a") #'ai-code-menu)
+  ;; Optional: Use vterm if you prefer, by default it is eat
+  ;; (setq claude-code-terminal-backend 'vterm) ;; for openai codex, github copilot cli, opencode; for claude-code-ide.el and gemini-cli.el, you can check their config
+  ;; Optional: Turn on auto-revert buffer, so that the AI code change automatically appears in the buffer
+  (global-auto-revert-mode 1)
+  (setq auto-revert-interval 1) ;; set to 1 second for faster update
+  ;; Optional: Set up Magit integration for AI commands in Magit popups
+  (with-eval-after-load 'magit
+    (ai-code-magit-setup-transients)))
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages nil)
+ '(package-vc-selected-packages
+   '((ai-code-interface :url
+			"https://github.com/tninja/ai-code-interface.el"))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
