@@ -682,6 +682,15 @@
  '(package-vc-selected-packages
    '((ai-code-interface :url
 			"https://github.com/tninja/ai-code-interface.el"))))
+
+ (with-eval-after-load 'ai-code-git
+    (with-eval-after-load 'magit
+      (transient-replace-suffix 'magit-log "A"   ;; replace existing AI Code entry
+        '("A" "AI Code: Analyze log" ai-code-magit-log-analyze))
+      ;; If you want a different key, change "A" in both places
+      ;; e.g. "z" -> '("z" "AI Code: Analyze log" ai-code-magit-log-analyze)
+      ))
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
