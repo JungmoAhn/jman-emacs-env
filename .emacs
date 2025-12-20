@@ -192,31 +192,52 @@
 (message "All packages installed.")
 
 ;;################################ Mode Settings ################################
-(add-hook 'c-mode-common-hook
-          (lambda ()
-            ;; Add kernel style
-            (c-add-style
-             "linux-tabs-only"
-             '("linux" (c-offsets-alist
-                        (arglist-cont-nonempty
-                         c-lineup-gcc-asm-reg
-                         c-lineup-arglist-tabs-only))))))
+;; Linux / kernel-ish defaults
+(setq-default tab-width 8)
 
-(add-hook 'c-mode-hook
-          (lambda ()
-            (let ((filename (buffer-file-name)))
-              ;; Enable kernel mode for the appropriate files
-              (when (and filename
-                         (string-match (expand-file-name "~/src/linux-trees")
-                                       filename))
-                (setq indent-tabs-mode t)
-                (c-set-style "linux-tabs-only")))))
+(with-eval-after-load 'cc-mode
+
+  (add-hook 'c-mode-common-hook
+            (lambda ()
+              (c-add-style
+               "linux-tabs-only"
+               '("linux"
+                 (c-offsets-alist
+                  (arglist-cont-nonempty
+                   c-lineup-gcc-asm-reg
+                   c-lineup-arglist-tabs-only))))
+
+              (c-set-style "linux-tabs-only")
+
+              (setq indent-tabs-mode t)
+              (setq tab-width 8)
+              (setq c-basic-offset 8)))
+
+  (defun my/tabify-leading-indentation ()
+    "현재 줄의 '맨 앞 여백'만 스페이스->탭으로 변환한다.
+(줄 중간 정렬용 스페이스는 건드리지 않음)"
+    (save-excursion
+      (beginning-of-line)
+      (let ((beg (point))
+            (end (progn (back-to-indentation) (point))))
+        (tabify beg end))))
+
+  (defun my/linux-ret-tabify-and-indent ()
+    "Linux 스타일: RET 누르면 현재 줄 들여쓰기만 탭화하고 새 줄을 들여쓴다."
+    (interactive)
+    (when (derived-mode-p 'c-mode 'c-ts-mode 'c++-mode 'c++-ts-mode)
+      (my/tabify-leading-indentation))
+    (newline-and-indent))
+
+  (define-key c-mode-map (kbd "RET") #'my/linux-ret-tabify-and-indent)
+  (define-key c++-mode-map (kbd "RET") #'my/linux-ret-tabify-and-indent))
+
+(add-hook 'before-save-hook #'delete-trailing-whitespace)
 
 (when (display-graphic-p)
   (setq select-enable-clipboard t)
   (setq select-enable-primary t))
 
-;; X clipboard와 연동 (xclip 사용)
 (when (executable-find "xclip")
   (setq interprogram-cut-function
         (lambda (text &optional push)
