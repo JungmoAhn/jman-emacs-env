@@ -178,9 +178,9 @@
   '(codegpt chatgpt orderless marginalia vertico rainbow-mode winum rustic hydra
     lsp-mode xcscope dash yasnippet which-key pyvenv projectile magit lsp-ui
     lsp-java lsp-ivy helm helm-xref helm-lsp helm-cscope helm-gtags flycheck company
-    color-theme-modern elogcat bitbake-modes treesit-langs treesit-auto codex-cli gptel
+    color-theme-modern elogcat bitbake-modes treesit-langs treesit-auto codex-cli
     codex-theme vterm vterm-toggle vterm-hotkey eshell-git-prompt eshell-toggle
-    eshell-outline org-ai dashboard centaur-tabs all-the-icons clang-format
+    eshell-outline org-ai dashboard centaur-tabs all-the-icons clang-format gptel
     blacken)) ; TODO: evil-textobj-tree-sitter ts-fold
 
 ;; Install packages
