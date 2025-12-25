@@ -9,24 +9,25 @@ anaconda:
 	pip install epc
 
 emacs-dep:
+	sudo apt-get update
 	sudo apt-get install build-essential texinfo libx11-dev libxpm-dev libjpeg-dev libpng-dev libgif-dev libtiff-dev libgtk2.0-dev libncurses-dev libtinfo-dev mailutils libgnutls28-dev bear git autoconf texinfo libgnutls28-dev libxml2-dev libncurses5-dev libjansson-dev software-properties-common snapd python3-pip cmake libvterm-dev xclip python3-venv universal-ctags graphviz
 
 	echo "source ~/venv/bin/activate" >> ~/.bashrc
 	source ~/.bashrc
 #	sudo add-apt-repository ppa:git-core/ppa
-	sudo apt-get update
 	sudo apt-get install git
 	sudo apt-get install magit
 	sudo apt-get install cscope
-	sudo apt-get install clangd-15
+	sudo apt-get install clangd-15 clang-format
 	sudo ln -sf /usr/bin/clangd-15 /usr/bin/clangd
+	cp .clangd ~/.clangd    #linux style format
 #       sudo apt-get install libtree-sitter-dev
 #       https://packages.debian.org/bookworm/amd64/libtree-sitter0/download
-	wget http://ftp.kr.debian.org/debian/pool/main/t/tree-sitter/libtree-sitter0_0.20.7-1_amd64.deb
-	sudo dpkg -i libtree-sitter0_0.20.7-1_amd64.deb
+#	wget http://ftp.kr.debian.org/debian/pool/main/t/tree-sitter/libtree-sitter0_0.20.7-1_amd64.deb
+#	sudo dpkg -i libtree-sitter0_0.20.7-1_amd64.deb
 #       https://packages.debian.org/bookworm/main/libtree-sitter-dev
-	wget http://ftp.kr.debian.org/debian/pool/main/t/tree-sitter/libtree-sitter-dev_0.20.7-1_amd64.deb
-	sudo dpkg -i libtree-sitter-dev_0.20.7-1_amd64.deb
+#	wget http://ftp.kr.debian.org/debian/pool/main/t/tree-sitter/libtree-sitter-dev_0.20.7-1_amd64.deb
+#	sudo dpkg -i libtree-sitter-dev_0.20.7-1_amd64.deb
 	sudo apt-get install python3-pip
 #	pip3 install python-language-server[all]
 #       sudo snap install bash-language-server
@@ -67,7 +68,7 @@ emacs-dep:
 
 emacs: emacs-dep
 #	https://emacs-lsp.github.io/lsp-mode/tutorials/CPP-guide/
-	wget -O - "${EMACS_URL}" | tar -xz 
+	wget -O - "${EMACS_URL}" | tar -xz
 	cd emacs-${EMACS_VER}; \
 	./configure --with-imagemagick --with-tree-sitter; \
 	make; \
@@ -79,8 +80,8 @@ emacs: emacs-dep
 #M-x treesit-langs-install-grammar
 
 # FIXME: complete cleanup
-clean: 
-	for D in ./*; do if [ -d "$${D}" ]; then cd "$${D}"; make clean; fi; done 
+clean:
+	for D in ./*; do if [ -d "$${D}" ]; then cd "$${D}"; make clean; fi; done
 
 .PHONY: clean
 

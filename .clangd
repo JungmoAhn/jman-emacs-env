@@ -1,0 +1,5 @@
+# Global clangd config for Linux style formatting
+CompileFlags:
+  Add: [-Wall, -Wextra]
+Format:
+  Style: "{BasedOnStyle: Linux, UseTab: Always, IndentWidth: 8, TabWidth: 8, SpaceBeforeParens: ControlStatements, SpacesInParentheses: false}"
