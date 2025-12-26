@@ -19,7 +19,7 @@
     color-theme-modern elogcat bitbake-modes treesit-langs treesit-auto codex-cli gptel
     codex-theme vterm vterm-toggle vterm-hotkey eshell-git-prompt eshell-toggle
     eshell-outline org-ai dashboard centaur-tabs all-the-icons clang-format
-    blacken)) ; TODO: evil-textobj-tree-sitter ts-fold
+    blacken consult-projectile)) ; TODO: evil-textobj-tree-sitter ts-fold
 
 (unless package-archive-contents
   (package-refresh-contents))
