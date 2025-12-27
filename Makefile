@@ -1,19 +1,21 @@
 CWD = $(shell pwd)
 
 include env.mk
-all: emacs
+all: codex emacs
 
 anaconda:
 	wget -O anaconda.sh "${ANACONDA_URL}"; bash anaconda.sh; rm anaconda.sh
 	conda install virtualenv
 	pip install epc
-
+codex:
+	sudo apt install -y nodejs npm
+	sudo npm install -g @openai/codex
 emacs-dep:
-	sudo apt-get update
 	sudo apt-get install build-essential texinfo libx11-dev libxpm-dev libjpeg-dev libpng-dev libgif-dev libtiff-dev libgtk2.0-dev libncurses-dev libtinfo-dev mailutils libgnutls28-dev bear git autoconf texinfo libgnutls28-dev libxml2-dev libncurses5-dev libjansson-dev software-properties-common snapd python3-pip cmake libvterm-dev xclip python3-venv universal-ctags graphviz
 
+	python3 -m venv ~/venv
 	echo "source ~/venv/bin/activate" >> ~/.bashrc
-	source ~/.bashrc
+	. ~/.bashrc
 #	sudo add-apt-repository ppa:git-core/ppa
 	sudo apt-get install git
 	sudo apt-get install magit
@@ -55,10 +57,9 @@ emacs-dep:
 	#git clone https://github.com/sijk/pygments-bitbake.git
 	git clone https://github.com/JungmoAhn/pygments-bitbake.git
 	cd pygments-bitbake; \
-	sudo python setup.py install;
+	python setup.py install;
 	echo "export GTAGSLABEL=pygments" >> ~/.bashrc
 	sudo cp /etc/gtags/gtags.conf ~/.globalrc
-	#for ctags
 	sed -i 's/tc=exuberant-ctags:tc=htags/tc=universal-ctags:tc=htags/' ~/.globalrc
 
 	echo "export GTAGSCONF=~/.globalrc" >> ~/.bashrc
@@ -67,7 +68,6 @@ emacs-dep:
 	sed -i '/:langmap=C#\\:.cs:\\/i \\t:langmap=Bitbake\\:.bb.bbappend.bbclass.conf.inc:\\' ~/.globalrc
 
 emacs: emacs-dep
-#	https://emacs-lsp.github.io/lsp-mode/tutorials/CPP-guide/
 	wget -O - "${EMACS_URL}" | tar -xz
 	cd emacs-${EMACS_VER}; \
 	./configure --with-imagemagick --with-tree-sitter; \
@@ -75,9 +75,6 @@ emacs: emacs-dep
 	sudo make install;
 	cp .emacs ~/
 	emacs -nw
-
-#M-x treesit-install-language-grammar
-#M-x treesit-langs-install-grammar
 
 # FIXME: complete cleanup
 clean:
