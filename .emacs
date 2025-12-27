@@ -243,7 +243,6 @@
 (global-set-key (kbd "M-v") #'scroll-half-page-up-center)
 
 ;;;; GTAGS
-
 (defun my/generate-tags ()
   "현재 디렉터리(또는 선택한 디렉터리)에서 gtags만 생성."
   (interactive)
@@ -415,6 +414,7 @@ So it's safe even if you haven't installed some *-ts-mode packages
 
 ;; Run immediately so `emacs file.c` starts in c-ts-mode on the first buffer.
 (jungmo/treesit-remap-modes)
+(add-hook 'c-ts-mode-hook (lambda () (font-lock-mode 1))) ;; Emacs 29+ tree-sitter 쓸 때
 
 ;; List of packages you want to install
 (defvar my-packages
