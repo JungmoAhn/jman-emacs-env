@@ -73,6 +73,7 @@
 (setq scroll-step 2 scroll-conservatively 3)
 ;; Always highlight source code
 (global-font-lock-mode 1)
+(add-hook 'prog-mode-hook #'font-lock-mode)
 
 (blink-cursor-mode -1) ; make cursor not blink
 (setq byte-compile-warnings '(cl-functions))
