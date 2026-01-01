@@ -8,8 +8,11 @@ anaconda:
 	conda install virtualenv
 	pip install epc
 codex:
-	sudo apt install -y nodejs npm
-	sudo npm install -g @openai/codex
+	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+	. ~/.bashrc
+	nvm install --lts
+	nvm use --lts
+	npm i -g @openai/codex@latest
 emacs-dep:
 	sudo apt-get install build-essential texinfo libx11-dev libxpm-dev libjpeg-dev libpng-dev libgif-dev libtiff-dev libgtk2.0-dev libncurses-dev libtinfo-dev mailutils libgnutls28-dev bear git autoconf texinfo libgnutls28-dev libxml2-dev libncurses5-dev libjansson-dev software-properties-common snapd python3-pip cmake libvterm-dev xclip python3-venv universal-ctags graphviz
 
