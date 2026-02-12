@@ -18,11 +18,9 @@
     lsp-java lsp-ivy helm helm-xref helm-lsp helm-cscope helm-gtags flycheck company
     color-theme-modern elogcat bitbake-modes treesit-langs treesit-auto codex-cli gptel
     codex-theme vterm vterm-toggle vterm-hotkey eshell-git-prompt eshell-toggle
-    eshell-outline org-ai dashboard centaur-tabs all-the-icons clang-format
+    eshell-outline org-ai org-roam org-super-agenda emacsql emacsql-sqlite emacsql-sqlite-builtin sqlite3
+    dashboard centaur-tabs all-the-icons clang-format
     blacken consult-projectile)) ; TODO: evil-textobj-tree-sitter ts-fold
-
-(unless package-archive-contents
-  (package-refresh-contents))
 
 ;; Install packages
 (dolist (package my-packages)
@@ -104,7 +102,24 @@
 
 ;; org
 (define-key global-map (kbd "C-c o r") 'org-redisplay-inline-images)
+(setq org-return-follows-link t)
+(setq org-mouse-1-follows-link t)
+(setq org-confirm-elisp-link-function nil)
+(with-eval-after-load 'ol
+  (unless (get 'org-link-open 'jacob/compat)
+    (defvar jacob/orig-org-link-open--impl (symbol-function 'org-link-open))
+    (defun org-link-open (&rest args)
+      (pcase args
+        (`(,link) (funcall jacob/orig-org-link-open--impl link nil))
+        (`(,link ,arg) (funcall jacob/orig-org-link-open--impl link arg))
+        (_ (apply jacob/orig-org-link-open--impl args))))
+    (put 'org-link-open 'jacob/compat t)))
+(unless (display-graphic-p)
+  (xterm-mouse-mode 1)
+  (mouse-wheel-mode 1))
 
+(setq org-todo-keywords
+        '((sequence "TODO(t)" "NEXT(n)" "BLOCK(b)" "|" "DONE(d)" "CANCELLED(c)")))
 ;; hiding & showing linenumber
 
 (define-key global-map (kbd "C-w s l") 'turn-on-line-numbers-display)
@@ -120,6 +135,7 @@
 (global-set-key (kbd "C-c 1") #'treemacs-select-window)
 (global-set-key (kbd "C-c 2") #'treemacs-switch-workspace)
 (global-set-key (kbd "C-c 3") #'treemacs-edit-workspaces)
+(global-set-key (kbd "C-c w") #'workspace-status)
 (global-set-key (kbd "C-c 0") #'magit-show-refs)
 (global-set-key (kbd "C-c f") #'project-find-file)
 
@@ -352,6 +368,10 @@ Default LANGS: '(c cpp). Safe to call multiple times."
 
 ;; Where your compiled grammars live (libtree-sitter-*.so)
 (add-to-list 'treesit-extra-load-path (expand-file-name "~/.emacs.d/tree-sitter/"))
+
+;; sqlite3.el (from emacs-sqlite3-api)
+(add-to-list 'load-path (expand-file-name "~/.emacs.d/lisp/"))
+(require 'sqlite3 nil t)
 
 (defun jungmo/treesit--remap (from to lang)
   "Add (FROM . TO) to `major-mode-remap-alist` if TO exists and LANG grammar is available."
@@ -787,6 +807,7 @@ So it's safe even if you haven't installed some *-ts-mode packages
 
 ;;;; Terminals / Shell
 (use-package vterm :ensure t)
+;;#'vterm-copy-mode))
 
 (use-package eat :ensure t)
 
@@ -870,7 +891,19 @@ So it's safe even if you haven't installed some *-ts-mode packages
       ;; e.g. "z" -> '("z" "AI Code: Analyze log" ai-code-magit-log-analyze)
       ))
 
-(add-hook 'emacs-startup-hook #'jacob/gptel-dashboard-startup)
+;;; pr automation
+;(defvar jacob/jenkins-base-url "https://jenkins.sample.local")
+;(defvar jacob/lava-base-url    "https://lava.sample.local")
+;(load "/path/to/pr-ci-hil-automation.el")
+
+;;; emacs notion
+;(require 'org-triage-ai)
+;(load "~/.emacs.d/lisp/org-workspace-suite.el")
+(load "~/.emacs.d/lisp/enotion/workspace-status.el")
+(load "~/.emacs.d/lisp/enotion/treemacs-workflows.el")
+
+(when (fboundp 'jacob/gptel-dashboard-startup)
+  (add-hook 'emacs-startup-hook #'jacob/gptel-dashboard-startup))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
