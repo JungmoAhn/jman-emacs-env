@@ -34,6 +34,9 @@
 ;(package-refresh-contents))
 ;(package-initialize)
 
+(setq shell-file-name "/bin/bash")
+(setq explicit-shell-file-name "/bin/bash")
+
 ;;;; ---------------------------------------------------------------------------
 ;;;; Project (Projectile + Consult)
 ;;;; ---------------------------------------------------------------------------
@@ -64,6 +67,7 @@
   (exec-path-from-shell-initialize))
 
 ;;################################ UI Settings ################################
+(require 'cl-lib)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 (menu-bar-mode -1)
@@ -77,8 +81,10 @@
 (setq byte-compile-warnings '(cl-functions))
 (setenv "JAVA_HOME" "/opt/jdk-17.0.2")
 
-(setq c-basic-offset 8)
 (setq-default indent-tabs-mode t)
+
+(setq tramp-use-ssh-controlmaster-options t)
+(setq tramp-connection-timeout 30)
 
 (defun untabify-buffer ()
   "Replace all spaces with tabs in the current buffer."
@@ -87,6 +93,91 @@
   (tabify (point-min) (point-max)))
 
 (global-set-key (kbd "C-c t") 'untabify-buffer)
+
+;(use-package clipetty
+;  :ensure t
+;  :hook (after-init . global-clipetty-mode))
+
+(defun my--recent-file-buffers (n)
+  "Return up to N most-recent buffers visiting files."
+  (let (res)
+    (dolist (b (buffer-list))
+      (when (and (buffer-live-p b) (buffer-file-name b))
+        (push b res)
+        (when (>= (length res) n)
+          (cl-return))))
+    (nreverse res)))
+
+
+;; ===== Layout helpers =====
+
+(defun my/match-window-width (src dst)
+  "Make DST window width equal to SRC window width."
+  (when (and (window-live-p src) (window-live-p dst))
+    (let ((delta (- (window-total-width src) (window-total-width dst))))
+      (when (/= delta 0)
+        (let ((ignore-window-parameters t)
+              (window-min-width 1))
+          (adjust-window-trailing-edge dst delta t t))))))
+
+(defun my/set-window-width (win width)
+  "Resize WIN to WIDTH columns (best-effort)."
+  (when (window-live-p win)
+    (let ((delta (- width (window-total-width win))))
+      (when (/= delta 0)
+        (let ((ignore-window-parameters t)
+              (window-min-width 1))
+          (adjust-window-trailing-edge win delta t t))))))
+
+;; ===== Main layout =====
+(defun my/fixed-work-layout-3col ()
+  "Code | Code | Org
+Shell| Shell| Org"
+  (interactive)
+  (delete-other-windows)
+
+  ;; ---- Tuning knobs ----
+  (let* ((org-width 40)     ;; Org column width (columns)
+         (shell-lines 12))  ;; Shell height (lines)
+    ;; Split forcing / narrow-frame tolerance
+    (let ((split-width-threshold 0)
+          (split-height-threshold nil)
+          (window-min-width 10)
+          (window-min-height 4))
+
+      ;; 1) Create 3 columns: w1 | w2 | w3
+      (let* ((w1 (selected-window))              ; Code/Shell col 1
+             (w2 (split-window w1 nil 'right))   ; Code/Shell col 2
+             (w3 (split-window w2 nil 'right)))  ; Org (full height)
+
+        ;; 2) Split bottom shells with fixed height
+        (split-window w1 (- shell-lines) 'below)
+        (split-window w2 (- shell-lines) 'below)
+
+        ;; 3) Fix Org width FIRST (so the remaining space is stable)
+        (my/set-window-width w3 org-width)
+
+        ;; 4) Make Code columns equal width (affects both top+bottom in each column)
+        (my/match-window-width w1 w2)
+
+        ;; 5) Put Org
+        (select-window w3)
+        (find-file "~/org/main.org")
+
+        ;; 6) Put shells
+        (select-window (window-in-direction 'below w1))
+        (shell "*shell-1*")
+        (select-window (window-in-direction 'below w2))
+        (shell "*shell-2*")
+
+        ;; Focus: left code
+        (select-window w1)))))
+
+;; Run on startup
+(add-hook 'emacs-startup-hook #'my/fixed-work-layout-3col)
+
+
+(winner-mode 1) ;; 레이아웃 복귀 C-c <left>
 
 ;;################################ Key Settings ################################
 (global-unset-key "\C-w")
@@ -124,6 +215,12 @@
 
 (define-key global-map (kbd "C-w s l") 'turn-on-line-numbers-display)
 (define-key global-map (kbd "C-w h l") 'turn-off-line-numbers-display)
+
+(global-set-key (kbd "C-M-<up>")    #'enlarge-window)
+(global-set-key (kbd "C-M-<down>")  #'shrink-window)
+(global-set-key (kbd "C-M-<right>") #'enlarge-window-horizontally)
+(global-set-key (kbd "C-M-<left>")  #'shrink-window-horizontally)
+(repeat-mode 1)
 
 ;; hiding & showing code
 ;; (define-key global-map (kbd "C-w h i a") 'hide-ifdefs)
@@ -169,8 +266,8 @@
 (define-key global-map (kbd "C-w 3") 'winum-select-window-3)
 (define-key global-map (kbd "C-w 4") 'winum-select-window-4)
 
-(define-key global-map [(meta p)] 'windmove-up)
-(define-key global-map [(meta n)] 'windmove-down)
+(define-key global-map [(meta u)] 'windmove-up)
+(define-key global-map [(meta d)] 'windmove-down)
 (define-key global-map [(meta f)] 'windmove-right)
 (define-key global-map [(meta b)] 'windmove-left)
 
@@ -320,6 +417,37 @@
 ;(add-to-list 'package-archives '( "jcs-elpa" . "https://jcs-emacs.github.io/jcs-elpa/packages/") t)
 ;(package-refresh-contents))
 ;(package-initialize)
+
+;; WSL: Always use *local* Windows clipboard even in TRAMP/remote buffers
+(when (and (eq system-type 'gnu/linux)
+           (string-match-p "microsoft"
+                           (downcase (shell-command-to-string "uname -r"))))
+
+  (defun wsl--local-default-directory ()
+    "Return a local directory to force local process execution."
+    (or (and (not (file-remote-p default-directory)) default-directory)
+        "/tmp/"))
+
+  ;; copy (Emacs -> Windows clipboard) : always run locally
+  (setq interprogram-cut-function
+        (lambda (text &optional _push)
+          (let ((default-directory (wsl--local-default-directory))
+                (process-connection-type nil))
+            (with-temp-buffer
+              (insert text)
+              (call-process-region (point-min) (point-max)
+                                   "clip.exe" nil nil nil)))))
+
+  ;; paste (Windows clipboard -> Emacs) : always run locally
+  (setq interprogram-paste-function
+        (lambda ()
+          (let ((default-directory (wsl--local-default-directory)))
+            (with-temp-buffer
+              ;; powershell output -> current buffer
+              (call-process "powershell.exe" nil t nil
+                            "-NoProfile" "-Command" "Get-Clipboard")
+              (let ((text (string-trim-right (buffer-string))))
+                (unless (string-empty-p text) text)))))))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; Tree-sitter (EARLY)
@@ -495,19 +623,6 @@ So it's safe even if you haven't installed some *-ts-mode packages
 (when (display-graphic-p)
   (setq select-enable-clipboard t)
   (setq select-enable-primary t))
-
-(when (executable-find "xclip")
-  (setq interprogram-cut-function
-	(lambda (text &optional push)
-	  (with-temp-buffer
-	    (insert text)
-	    (call-process-region (point-min) (point-max) "xclip" nil 0 nil "-selection" "clipboard"))))
-
-  (setq interprogram-paste-function
-	(lambda ()
-	  (let ((xclip-output (shell-command-to-string "xclip -o -selection clipboard")))
-	    (unless (string= xclip-output "")
-	      xclip-output)))))
 
 ;;hideshow for programming
 (load-library "hideshow")
@@ -854,12 +969,23 @@ So it's safe even if you haven't installed some *-ts-mode packages
   ;; Optional: Use vterm if you prefer, by default it is eat
   ;; (setq claude-code-terminal-backend 'vterm) ;; for openai codex, github copilot cli, opencode; for claude-code-ide.el and gemini-cli.el, you can check their config
   ;; Optional: Turn on auto-revert buffer, so that the AI code change automatically appears in the buffer
-  (global-auto-revert-mode 1)
-  (setq auto-revert-interval 1) ;; set to 1 second for faster update
+  ;(global-auto-revert-mode 1)
+  ;(setq auto-revert-interval 1) ;; set to 1 second for faster update
   ;; Optional: Set up Magit integration for AI commands in Magit popups
   (with-eval-after-load 'magit
     (ai-code-magit-setup-transients)))
 
+(defun revert-all-file-buffers ()
+  "Revert all file buffers without confirmation."
+  (interactive)
+  (dolist (buf (buffer-list))
+    (with-current-buffer buf
+      (when (and (buffer-file-name buf)
+                 (file-exists-p (buffer-file-name buf)))
+        (revert-buffer :ignore-auto :noconfirm))))
+  (message "All file buffers reverted."))
+
+(global-set-key (kbd "C-c r") 'revert-all-file-buffers)
 
 ;;;; Misc / Formats
 (use-package graphviz-dot-mode

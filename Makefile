@@ -58,7 +58,10 @@ emacs-dep:
 	mkdir -p jdtls
 	tar xvfz download.php?file=%2Fjdtls%2Fsnapshots%2Fjdt-language-server-latest.tar.gz -C jdtls
 	rm -rf ~/.emacs.d
-	mkdir -p ~/.emacs.d
+	mkdir -p ~/.emacs.d/.cache
+	cp .treemacs-persist ~/.emacs.d/.cache/
+	mkdir -p ~/.ssh/
+	cp .ssh/config ~/.ssh/config
 	mv jdtls ~/.emacs.d
 	echo "export JAVA_HOME=/opt/jdk-17" >> ~/.bashrc
 	echo "export PATH=$$PATH:$$JAVA_HOME/bin:~/.emacs.d/jdtls/bin" >> ~/.bashrc

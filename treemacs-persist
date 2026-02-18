@@ -1,0 +1,26 @@
+* Default
+** jman-emacs-env
+ - path :: ~/work/jman-emacs-env
+** org
+ - path :: ~/org
+*  CIS
+** gdmci
+ - path :: /ssh:jacobahn@192.168.23.16:/home/jacobahn/gdm_ci
+*  7275X
+** fastboot
+ - path :: /ssh:jacobahn@192.168.23.30:/home/jacobahn/fastboot/bsps
+** 7275x_uboot
+ - path :: /ssh:jacobahn@192.168.24.214:/home2/jacobahn/work/uboot/u-bootx
+** 7275x_uc1310
+ - path :: /ssh:jacobahn@192.168.24.214:/home2/jacobahn/work/uc1310/7275x_uc1310
+** 7275x_openwrt
+ - path :: /ssh:jacobahn@192.168.24.214:/home2/jacobahn/work/openwrt/openwrt_v1.0
+*  7243SL1
+** fastboot
+ - path :: /ssh:jacobahn@192.168.23.30:/home/jacobahn/fastboot/bsps/sl1
+** uboot
+ - path :: /ssh:jacobahn@192.168.24.214:/home2/jacobahn/work/uboot/7243sl/u-boot_7243SL_1
+** 7243sl_zephyr
+ - path :: /ssh:jacobahn@192.168.24.214:/home2/jacobahn/work/zephyr/Zephyros
+** 7243sl_zephyr_release
+ - path :: /ssh:jacobahn@192.168.24.214:/home2/jacobahn/work/zephyr/release/zephyros
