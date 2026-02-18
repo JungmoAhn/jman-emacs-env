@@ -19,7 +19,7 @@
     color-theme-modern elogcat bitbake-modes treesit-langs treesit-auto codex-cli gptel
     codex-theme vterm vterm-toggle vterm-hotkey eshell-git-prompt eshell-toggle
     eshell-outline org-ai org-roam org-super-agenda emacsql emacsql-sqlite emacsql-sqlite-builtin sqlite3
-    dashboard centaur-tabs all-the-icons clang-format
+    dashboard centaur-tabs all-the-icons clang-format multi-vterm
     blacken consult-projectile)) ; TODO: evil-textobj-tree-sitter ts-fold
 
 ;; Install packages
@@ -31,8 +31,8 @@
 (message "All packages installed.")
 
 ;(add-to-list 'package-archives '( "jcs-elpa" . "https://jcs-emacs.github.io/jcs-elpa/packages/") t)
-;(package-refresh-contents))
-;(package-initialize)
+(package-refresh-contents)
+(package-initialize)
 
 (setq shell-file-name "/bin/bash")
 (setq explicit-shell-file-name "/bin/bash")
@@ -174,10 +174,12 @@ Shell| Shell| Org"
         (select-window w1)))))
 
 ;; Run on startup
-(add-hook 'emacs-startup-hook #'my/fixed-work-layout-3col)
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (ignore-errors (my/fixed-work-layout-3col))))
 
 
-(winner-mode 1) ;; 레이아웃 복귀 C-c <left>
+(winner-mode 1) ;; Restore previous window layout: C-c <left>
 
 ;;################################ Key Settings ################################
 (global-unset-key "\C-w")
@@ -337,7 +339,7 @@ Shell| Shell| Org"
 	(select-window edit-win)))))
 ;;;; SCROLL
 (defun scroll-half-page-down-center ()
-  "반 페이지 아래로 스크롤하고 중앙 정렬."
+  "Scroll down by half a page and recenter."
   (interactive)
   (let* ((h (window-body-height))
          (lines (max 1 (/ h 2))))
@@ -345,24 +347,24 @@ Shell| Shell| Org"
     (recenter)))
 
 (defun scroll-half-page-up-center ()
-  "반 페이지 위로 스크롤하고 중앙 정렬."
+  "Scroll up by half a page and recenter."
   (interactive)
   (let* ((h (window-body-height))
          (lines (max 1 (/ h 2))))
     (forward-line (- lines))
     (recenter)))
 
-;; Emacs 기본 키를 유지하면서 반페이지 스크롤만 재매핑
+;; Keep default Emacs bindings and remap only half-page scrolling
 (global-set-key (kbd "C-v") #'scroll-half-page-down-center)
 (global-set-key (kbd "M-v") #'scroll-half-page-up-center)
 
 ;;;; GTAGS
 (defun my/generate-tags ()
-  "현재 디렉터리(또는 선택한 디렉터리)에서 gtags만 생성."
+  "Generate GTAGS in the current directory (or a selected directory)."
   (interactive)
-  (let ((default-directory (read-directory-name "Gtags 생성할 디렉터리: ")))
+  (let ((default-directory (read-directory-name "Directory for GTAGS: ")))
     (shell-command "gtags --gtagslabel=ctags")
-    (message "✅ GTAGS 생성 완료: %s" (expand-file-name "GTAGS" default-directory))))
+    (message "GTAGS created: %s" (expand-file-name "GTAGS" default-directory))))
 (global-set-key (kbd "C-c t") #'my/generate-tags)
 
 (dolist (cmd '(ggtags-find-tag-dwim
@@ -371,8 +373,8 @@ Shell| Shell| Org"
   (advice-add cmd :after (lambda (&rest _) (recenter))))
 
 (defun my/helm-grep-do-git-grep-at-gtags-root ()
-  "GTAGS 파일이 있으면 그 디렉터리에서 helm-grep-do-git-grep 실행.
-없으면 기본 Git 루트에서 실행."
+  "Run helm-grep-do-git-grep from the GTAGS directory if present.
+Otherwise, run it from the Git root."
   (interactive)
   (require 'ggtags nil t)
   (let* ((gtags-root
@@ -380,13 +382,13 @@ Shell| Shell| Org"
               (locate-dominating-file default-directory ".git")
               default-directory)))
     (let ((default-directory gtags-root))
-      (message "🔍 helm-grep-do-git-grep @ %s" default-directory)
+      (message "helm-grep-do-git-grep @ %s" default-directory)
       (call-interactively #'helm-grep-do-git-grep))))
 
 (global-set-key (kbd "C-c M-]") #'my/helm-grep-do-git-grep-at-gtags-root)
 
 (defun my/ggtags-grep-auto ()
-  "현재 커서 심볼로 ggtags-grep 실행 (묻지 않음)."
+  "Run ggtags-grep for the symbol at point without prompting."
   (interactive)
   (let ((symbol (thing-at-point 'symbol t)))
     (when symbol
@@ -394,12 +396,12 @@ Shell| Shell| Org"
 (global-set-key (kbd "C-c M-.") #'my/ggtags-grep-auto)
 
 (defun my/ggtags-find-reference-auto ()
-  "현재 커서 심볼로 `ggtags-find-reference` 실행 (묻지 않음)."
+  "Run ggtags-find-reference for the symbol at point without prompting."
   (interactive)
   (let ((symbol (thing-at-point 'symbol t)))
     (if symbol
         (ggtags-find-reference symbol)
-      (call-interactively #'ggtags-find-reference))))  ;; 커서 아래 심볼 없을 때만 직접 입력
+      (call-interactively #'ggtags-find-reference))))  ;; Prompt only when there is no symbol at point
 (global-set-key (kbd "C-c M-r") #'my/ggtags-find-reference-auto)
 
 ;;################################ Package Installing ################################
@@ -453,7 +455,7 @@ Shell| Shell| Org"
 ;;;; Tree-sitter (EARLY)
 ;;;;   - Ensure ts grammars are found and mode remaps apply before opening files
 ;;;; ---------------------------------------------------------------------------
-
+;; --- Tree-sitter grammars auto-install if ~/.emacs.d/tree-sitter is missing ---
 (setq treesit-language-source-alist
       '((bash "https://github.com/tree-sitter/tree-sitter-bash")
 	(cmake "https://github.com/uyha/tree-sitter-cmake")
@@ -471,7 +473,7 @@ Shell| Shell| Org"
 	(typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
 	(yaml "https://github.com/ikatyang/tree-sitter-yaml")))
 
-;;;; ---- tree-sitter(C/C++) 자동 설치 + c-mode -> c-ts-mode 리맵 ----
+
 (defun jungmo/treesit-ensure-grammars (&optional langs)
   "Ensure tree-sitter grammars for LANGS are installed.
 Default LANGS: '(c cpp). Safe to call multiple times."
@@ -485,17 +487,36 @@ Default LANGS: '(c cpp). Safe to call multiple times."
 	  (condition-case err
 	      (progn
 		(message "[treesit] Installing grammar: %s" lang)
-		;; Emacs가 git/cc 등을 호출해 빌드 + 설치합니다.
+		;; Emacs runs git and a C compiler to build and install the grammar.
 		(treesit-install-language-grammar lang)
 		(message "[treesit] Installed grammar: %s" lang))
 	    (error
 	     (message "[treesit] Failed to install %s: %s" lang err))))))))
 
-;;;; 시작할 때 한 번 확인하고 없으면 설치 시도
+(let ((ts-dir (expand-file-name "~/.emacs.d/tree-sitter/")))
+  ;; 1) Add local tree-sitter dir to Emacs tree-sitter search path (if variables exist)
+  (when (file-directory-p ts-dir)
+    (cond
+     ((boundp 'treesit-extra-load-path) (add-to-list 'treesit-extra-load-path ts-dir))
+     ((boundp 'treesit-load-path)       (add-to-list 'treesit-load-path ts-dir))))
+  ;; 2) If directory is missing, create it and install grammars (only if supported)
+  (unless (file-directory-p ts-dir)
+    (make-directory ts-dir t)
+    ;; If you use the treesit-langs package, set its directory (if variable exists)
+    (when (boundp 'treesit-langs-grammar-dir)
+      (setq treesit-langs-grammar-dir ts-dir))
+    ;; Run install only if the function exists (avoid startup crash)
+    (when (fboundp 'treesit-langs-install-grammars)
+      (treesit-langs-install-grammars))))
+
+;;;; Check once at startup and try installation if missing
 (add-hook 'emacs-startup-hook #'jungmo/treesit-ensure-grammars)
 
 ;; Where your compiled grammars live (libtree-sitter-*.so)
-(add-to-list 'treesit-extra-load-path (expand-file-name "~/.emacs.d/tree-sitter/"))
+(let ((x (expand-file-name "~/.emacs.d/tree-sitter/")))
+  (when (boundp 'treesit-extra-load-path)
+    (add-to-list 'treesit-extra-load-path x)))
+
 
 ;; sqlite3.el (from emacs-sqlite3-api)
 (add-to-list 'load-path (expand-file-name "~/.emacs.d/lisp/"))
@@ -563,7 +584,7 @@ So it's safe even if you haven't installed some *-ts-mode packages
 
 ;; Run immediately so `emacs file.c` starts in c-ts-mode on the first buffer.
 (jungmo/treesit-remap-modes)
-(add-hook 'c-ts-mode-hook (lambda () (font-lock-mode 1))) ;; Emacs 29+ tree-sitter 쓸 때
+(add-hook 'c-ts-mode-hook (lambda () (font-lock-mode 1))) ;; For Emacs 29+ tree-sitter
 
 ;; List of packages you want to install
 (defvar my-packages
@@ -765,16 +786,18 @@ So it's safe even if you haven't installed some *-ts-mode packages
       use-package-enable-imenu-support t)
 
 ;;;; ---------------------------------------------------------------------------
-;;;; Packages (use-package) — refactored layout
+;;;; Packages (use-package) - refactored layout
 ;;;;   - Sections grouped by purpose
-;;;;   - Duplicates removed (kept the effective block)
+;;;; Packages (use-package) - refactored layout
 ;;;; ---------------------------------------------------------------------------
+(setq custom-safe-themes t)
+(add-hook 'after-init-hook
+          (lambda ()
+            (load-theme 'goldenrod t)))
+;;(use-package color-theme-modern
+;;  :defer t)
+(load-theme 'goldenrod t)
 
-;;;; UI / Theme
-(use-package color-theme-modern
-  :defer t)
-(load-theme 'goldenrod t t)
-(enable-theme 'goldenrod)
 
 (use-package monet
   :vc (:url "https://github.com/stevemolitor/monet" :rev :newest))
@@ -841,7 +864,10 @@ So it's safe even if you haven't installed some *-ts-mode packages
 (use-package ggtags
   :hook ((c-mode c++-mode asm-mode python-mode java-mode shell-mode bitbake-mode makefile-mode makefile-gmake-mode dts-mode vhdl-mode eshell-mode) . ggtags-mode)
   :config
-    (setq ggtags-enable-navigation-keys nil))
+    (setq ggtags-enable-navigation-keys nil)
+    (define-key ggtags-mode-map (kbd "C-]") #'ggtags-find-tag-dwim)
+    (define-key ggtags-mode-map (kbd "M-.") #'xref-find-definitions)
+)
 
 
 
@@ -958,23 +984,6 @@ So it's safe even if you haven't installed some *-ts-mode packages
 (use-package claude-code-ide
   :vc (:url "https://github.com/manzaltu/claude-code-ide.el" :rev :newest))
 
-(use-package ai-code-interface
-  :vc (:url "https://github.com/tninja/ai-code-interface.el" :rev :newest)
-  :demand t
-  :config
-  (require 'ai-code-codex-cli)
-  (ai-code-set-backend 'codex) ;; default to OpenAI Codex CLI backend
-  ;; Enable global keybinding for the main menu
-  (global-set-key (kbd "C-c a") #'ai-code-menu)
-  ;; Optional: Use vterm if you prefer, by default it is eat
-  ;; (setq claude-code-terminal-backend 'vterm) ;; for openai codex, github copilot cli, opencode; for claude-code-ide.el and gemini-cli.el, you can check their config
-  ;; Optional: Turn on auto-revert buffer, so that the AI code change automatically appears in the buffer
-  ;(global-auto-revert-mode 1)
-  ;(setq auto-revert-interval 1) ;; set to 1 second for faster update
-  ;; Optional: Set up Magit integration for AI commands in Magit popups
-  (with-eval-after-load 'magit
-    (ai-code-magit-setup-transients)))
-
 (defun revert-all-file-buffers ()
   "Revert all file buffers without confirmation."
   (interactive)
@@ -990,7 +999,7 @@ So it's safe even if you haven't installed some *-ts-mode packages
 ;;;; Misc / Formats
 (use-package graphviz-dot-mode
   :mode ("\\.dot\\'" . graphviz-dot-mode))
-;; graphviz-dot-mode 설치돼 있다고 가정
+;; Assume graphviz-dot-mode is installed
 (autoload 'graphviz-dot-mode "graphviz-dot-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.dot\\'" . graphviz-dot-mode))
 (add-to-list 'auto-mode-alist '("\\.gv\\'"  . graphviz-dot-mode))
@@ -998,16 +1007,20 @@ So it's safe even if you haven't installed some *-ts-mode packages
 (use-package bitbake-modes
   :defer t)
 
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages nil)
- '(package-vc-selected-packages
-   '((ai-code-interface :url
-			"https://github.com/tninja/ai-code-interface.el"))))
+(use-package ai-code
+  :config
+  ;; use codex as backend, other options are 'gemini, 'github-copilot-cli, 'opencode, 'grok, 'claude-code-ide, 'claude-code-el, 'claude-code, 'cursor, 'kiro, 'codebuddy, 'aider, 'agent-shell
+  (ai-code-set-backend 'codex) ;; set your preferred backend
+  (global-set-key (kbd "C-c a") #'ai-code-menu)
+  ;; Optional: Enable @ file completion in comments and AI sessions
+  (ai-code-prompt-filepath-completion-mode 1)
+  ;; Optional: Configure AI test prompting mode (e.g., ask about running tests/TDD) for a tighter build-test loop
+  (setq ai-code-auto-test-type 'ask-me)
+  ;; Optional: In the AI session buffer (Evil normal state), SPC triggers the prompt entry UI
+  (with-eval-after-load 'evil (ai-code-backends-infra-evil-setup))
+  (global-auto-revert-mode 1)
+  (setq auto-revert-interval 1) ;; set to 1 second for faster update
+  )
 
  (with-eval-after-load 'ai-code-git
     (with-eval-after-load 'magit
@@ -1028,6 +1041,8 @@ So it's safe even if you haven't installed some *-ts-mode packages
 (load "~/.emacs.d/lisp/enotion/workspace-status.el")
 (load "~/.emacs.d/lisp/enotion/treemacs-workflows.el")
 
+(load-theme 'goldenrod t)
+
 (when (fboundp 'jacob/gptel-dashboard-startup)
   (add-hook 'emacs-startup-hook #'jacob/gptel-dashboard-startup))
 (custom-set-faces
@@ -1036,3 +1051,9 @@ So it's safe even if you haven't installed some *-ts-mode packages
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages nil))

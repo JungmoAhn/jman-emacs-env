@@ -15,19 +15,9 @@ codex:
 	npm i -g @openai/codex@latest
 emacs-dep:
 	sudo apt-get install build-essential texinfo libx11-dev libxpm-dev libjpeg-dev libpng-dev libgif-dev libtiff-dev libgtk2.0-dev libncurses-dev libtinfo-dev mailutils libgnutls28-dev bear git autoconf texinfo libgnutls28-dev libxml2-dev libncurses5-dev libjansson-dev software-properties-common snapd python3-pip cmake libvterm-dev xclip python3-venv universal-ctags graphviz sqlite3 libsqlite3-0 libsqlite3-dev
-	git clone https://github.com/pekingduck/emacs-sqlite3-api.git
-	cd emacs-sqlite3-api; \
-	make; \
-	emacs --batch -l package --eval "(progn (package-initialize) (package-install-file \"sqlite3-0.16.tar\"))"
-	git clone https://github.com/pekingduck/sqlite3.el.git
-	cd sqlite3.el; \
-	make; \
-	make install
-	mkdir -p ~/.emacs.d/lisp
-	cp -f sqlite3.el/sqlite3.el ~/.emacs.d/lisp/
 
-	python3 -m venv ~/venv
-	echo "source ~/venv/bin/activate" >> ~/.bashrc
+	python3 -m venv ~/.venv
+	echo "source ~/.venv/bin/activate" >> ~/.bashrc
 	. ~/.bashrc
 #	sudo add-apt-repository ppa:git-core/ppa
 	sudo apt-get install git
@@ -36,17 +26,13 @@ emacs-dep:
 	sudo apt-get install clangd-15 clang-format
 	sudo ln -sf /usr/bin/clangd-15 /usr/bin/clangd
 	cp .clangd ~/.clangd    #linux style format
-#       sudo apt-get install libtree-sitter-dev
-#       https://packages.debian.org/bookworm/amd64/libtree-sitter0/download
-#	wget http://ftp.kr.debian.org/debian/pool/main/t/tree-sitter/libtree-sitter0_0.20.7-1_amd64.deb
-#	sudo dpkg -i libtree-sitter0_0.20.7-1_amd64.deb
-#       https://packages.debian.org/bookworm/main/libtree-sitter-dev
-#	wget http://ftp.kr.debian.org/debian/pool/main/t/tree-sitter/libtree-sitter-dev_0.20.7-1_amd64.deb
-#	sudo dpkg -i libtree-sitter-dev_0.20.7-1_amd64.deb
+	git clone https://github.com/tree-sitter/tree-sitter.git
+	cd tree-sitter; \
+	git checkout v0.26.5; \ #ABI 15
+	make; sudo make install; sudo ldconfig
 	sudo apt-get install python3-pip
-#	pip3 install python-language-server[all]
-#       sudo snap install bash-language-server
-	pip3 install bitbake-language-server
+	pip install python-language-server[all]
+#	sudo snap install bash-language-server
 	sudo apt-get install libmagickwand-dev
 
 #       for eglot java
@@ -59,7 +45,7 @@ emacs-dep:
 	tar xvfz download.php?file=%2Fjdtls%2Fsnapshots%2Fjdt-language-server-latest.tar.gz -C jdtls
 	rm -rf ~/.emacs.d
 	mkdir -p ~/.emacs.d/.cache
-	cp .treemacs-persist ~/.emacs.d/.cache/
+	cp ./treemacs-persist ~/.emacs.d/.cache/
 	mkdir -p ~/.ssh/
 	cp .ssh/config ~/.ssh/config
 	mv jdtls ~/.emacs.d
@@ -71,6 +57,7 @@ emacs-dep:
 	pip3 install pygments
 	pip install pygments
 	#git clone https://github.com/sijk/pygments-bitbake.git
+	python -m pip install --upgrade pip setuptools wheel
 	git clone https://github.com/JungmoAhn/pygments-bitbake.git
 	cd pygments-bitbake; \
 	python setup.py install;
@@ -90,6 +77,17 @@ emacs: emacs-dep
 	make; \
 	sudo make install;
 	cp .emacs ~/
+
+	git clone https://github.com/pekingduck/emacs-sqlite3-api.git
+	cd emacs-sqlite3-api; \
+	make; \
+	emacs --batch -l package --eval "(progn (package-initialize) (package-install-file \"sqlite3-0.16.tar\"))"
+	git clone https://github.com/pekingduck/sqlite3.el.git
+	cd sqlite3.el; \
+	make; \
+	make install
+	mkdir -p ~/.emacs.d/lisp
+	cp -f sqlite3.el/sqlite3.el ~/.emacs.d/lisp/
 	emacs -nw
 
 # FIXME: complete cleanup
