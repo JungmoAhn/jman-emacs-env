@@ -420,36 +420,24 @@ Otherwise, run it from the Git root."
 ;(package-refresh-contents))
 ;(package-initialize)
 
-;; WSL: Always use *local* Windows clipboard even in TRAMP/remote buffers
+(defun my/local-wl-paste ()
+  (with-temp-buffer
+    ;; 로컬에서 실행 강제
+    (let ((default-directory "~"))   ;; 로컬 디렉토리
+      (call-process "wl-paste" nil t nil "-n"))
+    (string-trim-right (buffer-string))))
+
+(defun my/local-wl-copy (text &optional _push)
+  (let ((process-connection-type nil)
+        (default-directory "~")) ;; 로컬 실행 강제
+    (let ((proc (start-process "wl-copy" nil "wl-copy")))
+      (process-send-string proc text)
+      (process-send-eof proc))))
+
 (when (and (eq system-type 'gnu/linux)
-           (string-match-p "microsoft"
-                           (downcase (shell-command-to-string "uname -r"))))
-
-  (defun wsl--local-default-directory ()
-    "Return a local directory to force local process execution."
-    (or (and (not (file-remote-p default-directory)) default-directory)
-        "/tmp/"))
-
-  ;; copy (Emacs -> Windows clipboard) : always run locally
-  (setq interprogram-cut-function
-        (lambda (text &optional _push)
-          (let ((default-directory (wsl--local-default-directory))
-                (process-connection-type nil))
-            (with-temp-buffer
-              (insert text)
-              (call-process-region (point-min) (point-max)
-                                   "clip.exe" nil nil nil)))))
-
-  ;; paste (Windows clipboard -> Emacs) : always run locally
-  (setq interprogram-paste-function
-        (lambda ()
-          (let ((default-directory (wsl--local-default-directory)))
-            (with-temp-buffer
-              ;; powershell output -> current buffer
-              (call-process "powershell.exe" nil t nil
-                            "-NoProfile" "-Command" "Get-Clipboard")
-              (let ((text (string-trim-right (buffer-string))))
-                (unless (string-empty-p text) text)))))))
+           (getenv "WAYLAND_DISPLAY"))
+  (setq interprogram-cut-function #'my/local-wl-copy)
+  (setq interprogram-paste-function #'my/local-wl-paste))
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; Tree-sitter (EARLY)

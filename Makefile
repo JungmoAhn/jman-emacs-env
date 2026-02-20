@@ -35,6 +35,8 @@ emacs-dep:
 #	sudo snap install bash-language-server
 	sudo apt-get install libmagickwand-dev
 
+	sudo apt-get install -y wl-clipboard
+
 #       for eglot java
 	wget https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_linux-x64_bin.tar.gz
 	tar xvfz openjdk-17.0.2_linux-x64_bin.tar.gz
