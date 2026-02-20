@@ -420,24 +420,24 @@ Otherwise, run it from the Git root."
 ;(package-refresh-contents))
 ;(package-initialize)
 
-(defun my/local-wl-paste ()
-  (with-temp-buffer
-    ;; 로컬에서 실행 강제
-    (let ((default-directory "~"))   ;; 로컬 디렉토리
-      (call-process "wl-paste" nil t nil "-n"))
-    (string-trim-right (buffer-string))))
+(defun my/osc52-copy (text &optional _push)
+  (let ((encoded (base64-encode-string text t)))
+    (send-string-to-terminal
+     (concat "\033]52;c;" encoded "\a"))))
 
-(defun my/local-wl-copy (text &optional _push)
-  (let ((process-connection-type nil)
-        (default-directory "~")) ;; 로컬 실행 강제
-    (let ((proc (start-process "wl-copy" nil "wl-copy")))
-      (process-send-string proc text)
-      (process-send-eof proc))))
+(setq interprogram-cut-function #'my/osc52-copy)
 
-(when (and (eq system-type 'gnu/linux)
-           (getenv "WAYLAND_DISPLAY"))
-  (setq interprogram-cut-function #'my/local-wl-copy)
-  (setq interprogram-paste-function #'my/local-wl-paste))
+(defun my-smart-yank ()
+  (interactive)
+  (if (and (boundp 'interprogram-paste-function)
+           interprogram-paste-function)
+      (let ((clip (ignore-errors (funcall interprogram-paste-function))))
+        (if (and clip (not (string-empty-p clip)))
+            (insert clip)
+          (yank)))
+    (yank)))
+
+(global-set-key (kbd "C-y") #'my-smart-yank)
 
 ;;;; ---------------------------------------------------------------------------
 ;;;; Tree-sitter (EARLY)
@@ -507,8 +507,8 @@ Default LANGS: '(c cpp). Safe to call multiple times."
 
 
 ;; sqlite3.el (from emacs-sqlite3-api)
-(add-to-list 'load-path (expand-file-name "~/.emacs.d/lisp/"))
-(require 'sqlite3 nil t)
+;(add-to-list 'load-path (expand-file-name "~/.emacs.d/lisp/"))
+;(require 'sqlite3 nil t)
 
 (defun jungmo/treesit--remap (from to lang)
   "Add (FROM . TO) to `major-mode-remap-alist` if TO exists and LANG grammar is available."
@@ -1033,15 +1033,3 @@ So it's safe even if you haven't installed some *-ts-mode packages
 
 (when (fboundp 'jacob/gptel-dashboard-startup)
   (add-hook 'emacs-startup-hook #'jacob/gptel-dashboard-startup))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages nil))

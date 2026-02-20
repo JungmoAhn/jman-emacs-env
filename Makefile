@@ -35,8 +35,6 @@ emacs-dep:
 #	sudo snap install bash-language-server
 	sudo apt-get install libmagickwand-dev
 
-	sudo apt-get install -y wl-clipboard
-
 #       for eglot java
 	wget https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_linux-x64_bin.tar.gz
 	tar xvfz openjdk-17.0.2_linux-x64_bin.tar.gz
@@ -79,7 +77,6 @@ emacs: emacs-dep
 	make; \
 	sudo make install;
 	cp .emacs ~/
-
 	git clone https://github.com/pekingduck/emacs-sqlite3-api.git
 	cd emacs-sqlite3-api; \
 	make; \
@@ -87,9 +84,9 @@ emacs: emacs-dep
 	git clone https://github.com/pekingduck/sqlite3.el.git
 	cd sqlite3.el; \
 	make; \
-	make install
-	mkdir -p ~/.emacs.d/lisp
-	cp -f sqlite3.el/sqlite3.el ~/.emacs.d/lisp/
+	make install; \
+	mkdir -p ~/.emacs.d/lisp; \
+	cp -f sqlite3-0.16/sqlite3.el ~/.emacs.d/lisp/
 	emacs -nw
 
 # FIXME: complete cleanup
