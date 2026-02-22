@@ -15,10 +15,9 @@ codex:
 	npm i -g @openai/codex@latest
 emacs-dep:
 	sudo apt-get install build-essential texinfo libx11-dev libxpm-dev libjpeg-dev libpng-dev libgif-dev libtiff-dev libgtk2.0-dev libncurses-dev libtinfo-dev mailutils libgnutls28-dev bear git autoconf texinfo libgnutls28-dev libxml2-dev libncurses5-dev libjansson-dev software-properties-common snapd python3-pip cmake libvterm-dev xclip python3-venv universal-ctags graphviz sqlite3 libsqlite3-0 libsqlite3-dev
-
 	python3 -m venv ~/.venv
 	echo "source ~/.venv/bin/activate" >> ~/.bashrc
-	. ~/.bashrc
+	source ~/.bashrc
 #	sudo add-apt-repository ppa:git-core/ppa
 	sudo apt-get install git
 	sudo apt-get install magit
@@ -54,7 +53,6 @@ emacs-dep:
 	echo "export JAVA_HOME=/opt/jdk-17" >> ~/.bashrc
 #	for ggtags especially with python
 	sudo apt-get install global
-	pip3 install pygments
 	pip install pygments
 	#git clone https://github.com/sijk/pygments-bitbake.git
 	python -m pip install --upgrade pip setuptools wheel
@@ -70,7 +68,7 @@ emacs-dep:
 	sed -i '/:gtags_parser=C#\\:$pygmentslib:\\/i \\t:gtags_parser=Bitbake\\:$pygmentslib:\\' ~/.globalrc
 	sed -i '/:langmap=C#\\:.cs:\\/i \\t:langmap=Bitbake\\:.bb.bbappend.bbclass.conf.inc:\\' ~/.globalrc
 
-emacs: emacs-dep
+emacs:
 	wget -O - "${EMACS_URL}" | tar -xz
 	cd emacs-${EMACS_VER}; \
 	./configure --with-imagemagick --with-tree-sitter; \
@@ -80,13 +78,8 @@ emacs: emacs-dep
 	git clone https://github.com/pekingduck/emacs-sqlite3-api.git
 	cd emacs-sqlite3-api; \
 	make; \
-	emacs --batch -l package --eval "(progn (package-initialize) (package-install-file \"sqlite3-0.16.tar\"))"
-	git clone https://github.com/pekingduck/sqlite3.el.git
-	cd sqlite3.el; \
-	make; \
-	make install; \
 	mkdir -p ~/.emacs.d/lisp; \
-	cp -f sqlite3-0.16/sqlite3.el ~/.emacs.d/lisp/
+	cp -f sqlite3.el ~/.emacs.d/lisp/
 	emacs -nw
 
 # FIXME: complete cleanup
