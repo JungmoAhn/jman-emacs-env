@@ -1,7 +1,7 @@
 CWD = $(shell pwd)
 
 include env.mk
-all: codex emacs
+all: codex tmux emacs
 
 anaconda:
 	wget -O anaconda.sh "${ANACONDA_URL}"; bash anaconda.sh; rm anaconda.sh
@@ -47,7 +47,6 @@ emacs-dep:
 	cp ./treemacs-persist ~/.emacs.d/.cache/
 	mkdir -p ~/.ssh/
 	cp .ssh/config ~/.ssh/config
-	cp .tmux.conf ~/.tmux.conf
 	mv jdtls ~/.emacs.d
 	echo "export JAVA_HOME=/opt/jdk-17" >> ~/.bashrc
 	echo "export PATH=$$PATH:$$JAVA_HOME/bin:~/.emacs.d/jdtls/bin" >> ~/.bashrc
@@ -68,6 +67,10 @@ emacs-dep:
 	sed -i "s/:tc=native:/:tc=native:tc=pygments:/" ~/.globalrc
 	sed -i '/:gtags_parser=C#\\:$pygmentslib:\\/i \\t:gtags_parser=Bitbake\\:$pygmentslib:\\' ~/.globalrc
 	sed -i '/:langmap=C#\\:.cs:\\/i \\t:langmap=Bitbake\\:.bb.bbappend.bbclass.conf.inc:\\' ~/.globalrc
+
+tmux:
+	cp .tmux.conf ~/.tmux.conf
+	git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 emacs:
 	wget -O - "${EMACS_URL}" | tar -xz
