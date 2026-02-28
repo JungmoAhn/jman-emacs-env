@@ -14,7 +14,7 @@ codex:
 	nvm use --lts
 	npm i -g @openai/codex@latest
 emacs-dep:
-	sudo apt-get install build-essential texinfo libx11-dev libxpm-dev libjpeg-dev libpng-dev libgif-dev libtiff-dev libgtk2.0-dev libncurses-dev libtinfo-dev mailutils libgnutls28-dev bear git autoconf texinfo libgnutls28-dev libxml2-dev libncurses5-dev libjansson-dev software-properties-common snapd python3-pip cmake libvterm-dev xclip python3-venv universal-ctags graphviz sqlite3 libsqlite3-0 libsqlite3-dev
+	sudo apt-get install build-essential texinfo libx11-dev libxpm-dev libjpeg-dev libpng-dev libgif-dev libtiff-dev libgtk2.0-dev libncurses-dev libtinfo-dev mailutils libgnutls28-dev bear git autoconf texinfo libgnutls28-dev libxml2-dev libncurses5-dev libjansson-dev software-properties-common snapd python3-pip cmake libvterm-dev xclip python3-venv universal-ctags graphviz sqlite3 libsqlite3-0 libsqlite3-dev tmux
 	python3 -m venv ~/.venv
 	echo "source ~/.venv/bin/activate" >> ~/.bashrc
 	source ~/.bashrc
@@ -47,6 +47,7 @@ emacs-dep:
 	cp ./treemacs-persist ~/.emacs.d/.cache/
 	mkdir -p ~/.ssh/
 	cp .ssh/config ~/.ssh/config
+	cp .tmux.conf ~/.tmux.conf
 	mv jdtls ~/.emacs.d
 	echo "export JAVA_HOME=/opt/jdk-17" >> ~/.bashrc
 	echo "export PATH=$$PATH:$$JAVA_HOME/bin:~/.emacs.d/jdtls/bin" >> ~/.bashrc
