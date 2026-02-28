@@ -69,6 +69,7 @@ emacs-dep:
 	sed -i '/:langmap=C#\\:.cs:\\/i \\t:langmap=Bitbake\\:.bb.bbappend.bbclass.conf.inc:\\' ~/.globalrc
 
 tmux:
+	mkdir -p ~/.tmux
 	cp .tmux.conf ~/.tmux.conf
 	git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
