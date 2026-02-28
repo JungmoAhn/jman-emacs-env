@@ -37,6 +37,7 @@
 (setq shell-file-name "/bin/bash")
 (setq explicit-shell-file-name "/bin/bash")
 
+(setq ring-bell-function 'ignore)
 ;;;; ---------------------------------------------------------------------------
 ;;;; Project (Projectile + Consult)
 ;;;; ---------------------------------------------------------------------------
@@ -420,12 +421,44 @@ Otherwise, run it from the Git root."
 ;(package-refresh-contents))
 ;(package-initialize)
 
-(defun my/osc52-copy (text &optional _push)
-  (let ((encoded (base64-encode-string text t)))
-    (send-string-to-terminal
-     (concat "\033]52;c;" encoded "\a"))))
+;;; --- OSC52 copy with tmux-aware DCS wrapping -------------------------------
 
+(defun my--in-tmux-p ()
+  "Return non-nil if we're running inside tmux."
+  (and (getenv "TMUX") (not (string-empty-p (getenv "TMUX")))))
+
+(defun my--osc52-encode (text)
+  "Base64 encode TEXT without newlines."
+  (base64-encode-string text t))
+
+(defun my--osc52-raw-seq (encoded)
+  "Return raw OSC52 escape sequence using ENCODED payload."
+  (concat "\033]52;c;" encoded "\a"))
+
+(defun my--osc52-tmux-dcs-wrap (osc52-seq)
+  "Wrap OSC52-SEQ so tmux passes it through to the outer terminal.
+This uses tmux's DCS passthrough form:
+ESC P tmux; ESC <...each ESC doubled...> ESC \\"
+  (concat
+   "\033Ptmux;"
+   (replace-regexp-in-string "\033" "\033\033" osc52-seq nil t)
+   "\033\\"))
+
+(defun my/osc52-copy (text &optional _push)
+  "Copy TEXT to system clipboard via OSC52.
+When inside tmux, wrap with DCS so it reaches the outer terminal."
+  (when (and text (not (string-empty-p text)))
+    (let* ((encoded (my--osc52-encode text))
+           (osc52   (my--osc52-raw-seq encoded))
+           (seq     (if (my--in-tmux-p)
+                        (my--osc52-tmux-dcs-wrap osc52)
+                      osc52)))
+      (send-string-to-terminal seq))))
+
+;; Use OSC52 for interprogram clipboard copy
 (setq interprogram-cut-function #'my/osc52-copy)
+
+;;; --- Smart yank: try clipboard paste, fallback to kill-ring ----------------
 
 (defun my-smart-yank ()
   (interactive)
