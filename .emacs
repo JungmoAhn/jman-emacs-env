@@ -183,7 +183,7 @@ Shell| Shell| Org"
 (winner-mode 1) ;; Restore previous window layout: C-c <left>
 
 ;;################################ Key Settings ################################
-(global-unset-key "\C-w")
+(global-unset-key "\C-b")
 ;;(define-key global-map (kbd "C-w r") 'windresize)
 (define-key global-map [(meta l)] 'buffer-menu)
 (define-key global-map (kbd "RET") 'newline-and-indent)
@@ -216,8 +216,8 @@ Shell| Shell| Org"
         '((sequence "TODO(t)" "NEXT(n)" "BLOCK(b)" "|" "DONE(d)" "CANCELLED(c)")))
 ;; hiding & showing linenumber
 
-(define-key global-map (kbd "C-w s l") 'turn-on-line-numbers-display)
-(define-key global-map (kbd "C-w h l") 'turn-off-line-numbers-display)
+(define-key global-map (kbd "C-b s l") 'turn-on-line-numbers-display)
+(define-key global-map (kbd "C-b h l") 'turn-off-line-numbers-display)
 
 (global-set-key (kbd "C-M-<up>")    #'enlarge-window)
 (global-set-key (kbd "C-M-<down>")  #'shrink-window)
@@ -239,7 +239,7 @@ Shell| Shell| Org"
 (global-set-key (kbd "C-c 0") #'magit-show-refs)
 (global-set-key (kbd "C-c f") #'project-find-file)
 
-(define-key global-map (kbd "C-b p s") 'project-eshell)
+;(define-key global-map (kbd "C-b p s") 'project-eshell)
 
 (define-key global-map (kbd "C-b o") 'projectile-switch-open-project)
 (define-key global-map (kbd "C-b s w") 'treemacs-switch-workspace)
