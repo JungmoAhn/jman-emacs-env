@@ -183,7 +183,7 @@ Shell| Shell| Org"
 (winner-mode 1) ;; Restore previous window layout: C-c <left>
 
 ;;################################ Key Settings ################################
-(global-unset-key "\C-b")
+(global-unset-key "\C-q")
 ;;(define-key global-map (kbd "C-w r") 'windresize)
 (define-key global-map [(meta l)] 'buffer-menu)
 (define-key global-map (kbd "RET") 'newline-and-indent)
@@ -216,8 +216,8 @@ Shell| Shell| Org"
         '((sequence "TODO(t)" "NEXT(n)" "BLOCK(b)" "|" "DONE(d)" "CANCELLED(c)")))
 ;; hiding & showing linenumber
 
-(define-key global-map (kbd "C-b s l") 'turn-on-line-numbers-display)
-(define-key global-map (kbd "C-b h l") 'turn-off-line-numbers-display)
+(define-key global-map (kbd "C-q s l") 'turn-on-line-numbers-display)
+(define-key global-map (kbd "C-q h l") 'turn-off-line-numbers-display)
 
 (global-set-key (kbd "C-M-<up>")    #'enlarge-window)
 (global-set-key (kbd "C-M-<down>")  #'shrink-window)
@@ -239,51 +239,51 @@ Shell| Shell| Org"
 (global-set-key (kbd "C-c 0") #'magit-show-refs)
 (global-set-key (kbd "C-c f") #'project-find-file)
 
-;(define-key global-map (kbd "C-b p s") 'project-eshell)
+;(define-key global-map (kbd "C-q p s") 'project-eshell)
 
-(define-key global-map (kbd "C-b o") 'projectile-switch-open-project)
-(define-key global-map (kbd "C-b s w") 'treemacs-switch-workspace)
-(define-key global-map (kbd "C-b s p") 'treemacs-select-window)
-(define-key global-map (kbd "C-b c w") 'treemacs-create-workspace)
-(define-key global-map (kbd "C-b r w") 'treemacs-remove-workspace)
-(define-key global-map (kbd "C-b c p") 'treemacs-peek)
-(define-key global-map (kbd "C-b a p") 'treemacs-add-project-to-workspace)
-(define-key global-map (kbd "C-b r p") 'treemacs-remove-project-from-workspace)
-(define-key global-map (kbd "C-b n p") 'treemacs-next-project)
-(define-key global-map (kbd "C-b p p") 'treemacs-previous-project)
+(define-key global-map (kbd "C-q o") 'projectile-switch-open-project)
+(define-key global-map (kbd "C-q s w") 'treemacs-switch-workspace)
+(define-key global-map (kbd "C-q s p") 'treemacs-select-window)
+(define-key global-map (kbd "C-q c w") 'treemacs-create-workspace)
+(define-key global-map (kbd "C-q r w") 'treemacs-remove-workspace)
+(define-key global-map (kbd "C-q c p") 'treemacs-peek)
+(define-key global-map (kbd "C-q a p") 'treemacs-add-project-to-workspace)
+(define-key global-map (kbd "C-q r p") 'treemacs-remove-project-from-workspace)
+(define-key global-map (kbd "C-q n p") 'treemacs-next-project)
+(define-key global-map (kbd "C-q p p") 'treemacs-previous-project)
 
-(define-key global-map (kbd "C-b R p") 'projectil-remove-known-project)
-(define-key global-map (kbd "C-b S p") 'counsel-projectile-switch-project)
+(define-key global-map (kbd "C-q R p") 'projectil-remove-known-project)
+(define-key global-map (kbd "C-q S p") 'counsel-projectile-switch-project)
 
 ;; manage a  current workspace
-(define-key global-map (kbd "C-b a f") 'lsp-workspace-folders-add)
-(define-key global-map (kbd "C-b r f") 'lsp-workspace-folders-remove)
+(define-key global-map (kbd "C-q a f") 'lsp-workspace-folders-add)
+(define-key global-map (kbd "C-q r f") 'lsp-workspace-folders-remove)
 
 ;; moving cursor
 
-(define-key global-map (kbd "C-b w") 'winum-select-window-by-number)
-(define-key global-map (kbd "C-b g") 'goto-line)
-(define-key global-map (kbd "C-b l") 'enlarge-window)
-(define-key global-map (kbd "C-b 1") 'winum-select-window-1)
-(define-key global-map (kbd "C-b 2") 'winum-select-window-2)
-(define-key global-map (kbd "C-b 3") 'winum-select-window-3)
-(define-key global-map (kbd "C-b 4") 'winum-select-window-4)
+(define-key global-map (kbd "C-q w") 'winum-select-window-by-number)
+(define-key global-map (kbd "C-q g") 'goto-line)
+(define-key global-map (kbd "C-q l") 'enlarge-window)
+(define-key global-map (kbd "C-q 1") 'winum-select-window-1)
+(define-key global-map (kbd "C-q 2") 'winum-select-window-2)
+(define-key global-map (kbd "C-q 3") 'winum-select-window-3)
+(define-key global-map (kbd "C-q 4") 'winum-select-window-4)
 
 (define-key global-map [(meta u)] 'windmove-up)
 (define-key global-map [(meta d)] 'windmove-down)
 (define-key global-map [(meta f)] 'windmove-right)
 (define-key global-map [(meta b)] 'windmove-left)
 
-(define-key global-map (kbd "C-b b b") 'beginning-of-buffer)
-(define-key global-map (kbd "C-b b p") 'backward-paragraph)
-(define-key global-map (kbd "C-b b s") 'backward-sentence)
-(define-key global-map (kbd "C-b b i") 'backward-ifdef)
-(define-key global-map (kbd "C-b f e") 'end-of-buffer)
-(define-key global-map (kbd "C-b f p") 'forward-paragraph)
-(define-key global-map (kbd "C-b f s") 'forward-sentence)
-(define-key global-map (kbd "C-b f i") 'forward-ifdef)
+(define-key global-map (kbd "C-q b b") 'beginning-of-buffer)
+(define-key global-map (kbd "C-q b p") 'backward-paragraph)
+(define-key global-map (kbd "C-q b s") 'backward-sentence)
+(define-key global-map (kbd "C-q b i") 'backward-ifdef)
+(define-key global-map (kbd "C-q f e") 'end-of-buffer)
+(define-key global-map (kbd "C-q f p") 'forward-paragraph)
+(define-key global-map (kbd "C-q f s") 'forward-sentence)
+(define-key global-map (kbd "C-q f i") 'forward-ifdef)
 
-(define-key global-map (kbd "C-b d") 'toggle-window-dedicated)
+(define-key global-map (kbd "C-q d") 'toggle-window-dedicated)
 ;; (define-key global-map [f3] 'cscope-find-functions-calling-this-function)
 ;; (define-key global-map [f1] 'lsp-ui-peek-find-definitions)
 ;; (define-key global-map [f2] 'lsp-ui-peek-find-references)
