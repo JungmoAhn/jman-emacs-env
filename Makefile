@@ -1,7 +1,7 @@
 CWD = $(shell pwd)
 
 include env.mk
-all: codex tmux emacs
+all: tmux emacs
 
 anaconda:
 	wget -O anaconda.sh "${ANACONDA_URL}"; bash anaconda.sh; rm anaconda.sh
@@ -10,14 +10,14 @@ anaconda:
 codex:
 	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 	. ~/.bashrc
-	nvm install --lts
-	nvm use --lts
+	nvm install 24
+	nvm use 24
 	npm i -g @openai/codex@latest
 emacs-dep:
-	sudo apt-get install build-essential texinfo libx11-dev libxpm-dev libjpeg-dev libpng-dev libgif-dev libtiff-dev libgtk2.0-dev libncurses-dev libtinfo-dev mailutils libgnutls28-dev bear git autoconf texinfo libgnutls28-dev libxml2-dev libncurses5-dev libjansson-dev software-properties-common snapd python3-pip cmake libvterm-dev xclip python3-venv universal-ctags graphviz sqlite3 libsqlite3-0 libsqlite3-dev tmux
+	sudo apt-get install build-essential texinfo libx11-dev libxpm-dev libjpeg-dev libpng-dev libgif-dev libtiff-dev libgtk2.0-dev libncurses-dev libtinfo-dev mailutils libgnutls28-dev bear git autoconf texinfo libgnutls28-dev libxml2-dev libncurses5-dev libjansson-dev software-properties-common snapd python3-pip cmake libvterm-dev xclip python3-venv universal-ctags graphviz sqlite3 libsqlite3-0 libsqlite3-dev tmux libxpm-dev libgif-dev libgnutls28-dev 
 	python3 -m venv ~/.venv
 	echo "source ~/.venv/bin/activate" >> ~/.bashrc
-	source ~/.bashrc
+	. ~/.bashrc
 #	sudo add-apt-repository ppa:git-core/ppa
 	sudo apt-get install git
 	sudo apt-get install magit
@@ -27,7 +27,7 @@ emacs-dep:
 	cp .clangd ~/.clangd    #linux style format
 	git clone https://github.com/tree-sitter/tree-sitter.git
 	cd tree-sitter; \
-	git checkout v0.26.5; \ #ABI 15
+	git checkout v0.25.10; \
 	make; sudo make install; sudo ldconfig
 	sudo apt-get install python3-pip
 	pip install python-language-server[all]
@@ -69,9 +69,11 @@ emacs-dep:
 	sed -i '/:langmap=C#\\:.cs:\\/i \\t:langmap=Bitbake\\:.bb.bbappend.bbclass.conf.inc:\\' ~/.globalrc
 
 tmux:
+	sudo apt-get install xclip xsel
 	mkdir -p ~/.tmux
 	cp .tmux.conf ~/.tmux.conf
 	git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+	echo "Install tmux package using Ctrl+t I in tmux\n\n\n\n\n\n "
 
 emacs:
 	wget -O - "${EMACS_URL}" | tar -xz

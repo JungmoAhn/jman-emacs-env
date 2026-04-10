@@ -22,6 +22,8 @@
     dashboard centaur-tabs all-the-icons clang-format multi-vterm
     blacken consult-projectile)) ; TODO: evil-textobj-tree-sitter ts-fold
 
+
+
 ;; Install packages
 (dolist (package my-packages)
   (unless (package-installed-p package)
@@ -453,10 +455,35 @@ When inside tmux, wrap with DCS so it reaches the outer terminal."
            (seq     (if (my--in-tmux-p)
                         (my--osc52-tmux-dcs-wrap osc52)
                       osc52)))
-      (send-string-to-terminal seq))))
+	      (send-string-to-terminal seq))))
 
-;; Use OSC52 for interprogram clipboard copy
-(setq interprogram-cut-function #'my/osc52-copy)
+(defun my/xclip-copy (text &optional _push)
+  "Copy TEXT to X11 clipboard via xclip."
+  (when (and text (not (string-empty-p text)) (executable-find "xclip"))
+    (let ((process-connection-type nil))
+      (with-temp-buffer
+	(insert text)
+	(call-process-region (point-min) (point-max)
+			     "xclip" nil nil nil
+			     "-in" "-selection" "clipboard")))))
+
+(defun my/xclip-paste ()
+  "Paste text from X11 clipboard via xclip."
+  (when (and (executable-find "xclip")
+	     (getenv "DISPLAY"))
+    (with-temp-buffer
+      (when (eq 0 (call-process "xclip" nil t nil "-out" "-selection" "clipboard"))
+	(buffer-string)))))
+
+;; In terminal Emacs under VNC/X11, prefer xclip so tmux can paste with Prefix+P.
+;; Fallback to OSC52 for terminal chains where xclip is unavailable.
+(if (and (not (display-graphic-p))
+	 (getenv "DISPLAY")
+	 (executable-find "xclip"))
+    (progn
+      (setq interprogram-cut-function #'my/xclip-copy)
+      (setq interprogram-paste-function #'my/xclip-paste))
+  (setq interprogram-cut-function #'my/osc52-copy))
 
 ;;; --- Smart yank: try clipboard paste, fallback to kill-ring ----------------
 
@@ -1066,3 +1093,20 @@ So it's safe even if you haven't installed some *-ts-mode packages
 
 (when (fboundp 'jacob/gptel-dashboard-startup)
   (add-hook 'emacs-startup-hook #'jacob/gptel-dashboard-startup))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-vc-selected-packages
+   '((claude-code-ide :url
+		      "https://github.com/manzaltu/claude-code-ide.el")
+     (claude-code :url
+		  "https://github.com/stevemolitor/claude-code.el")
+     (monet :url "https://github.com/stevemolitor/monet"))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
