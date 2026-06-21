@@ -388,8 +388,6 @@ Otherwise, run it from the Git root."
       (message "helm-grep-do-git-grep @ %s" default-directory)
       (call-interactively #'helm-grep-do-git-grep))))
 
-(global-set-key (kbd "M-]") #'ggtags-find-definition)
-
 (defun my/ggtags-grep-auto ()
   "Run ggtags-grep for the symbol at point without prompting."
   (interactive)
@@ -1129,6 +1127,9 @@ So it's safe even if you haven't installed some *-ts-mode packages
      (claude-code :url
 		  "https://github.com/stevemolitor/claude-code.el")
      (monet :url "https://github.com/stevemolitor/monet"))))
+
+(global-set-key (kbd "M-]") #'ggtags-find-definition)
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
