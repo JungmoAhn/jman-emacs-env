@@ -388,7 +388,7 @@ Otherwise, run it from the Git root."
       (message "helm-grep-do-git-grep @ %s" default-directory)
       (call-interactively #'helm-grep-do-git-grep))))
 
-(global-set-key (kbd "C-c M-]") #'my/helm-grep-do-git-grep-at-gtags-root)
+(global-set-key (kbd "M-]") #'ggtags-find-definition)
 
 (defun my/ggtags-grep-auto ()
   "Run ggtags-grep for the symbol at point without prompting."
@@ -396,16 +396,9 @@ Otherwise, run it from the Git root."
   (let ((symbol (thing-at-point 'symbol t)))
     (when symbol
       (ggtags-grep symbol))))
-(global-set-key (kbd "C-c M-.") #'my/ggtags-grep-auto)
+(global-set-key (kbd "M-r") #'my/ggtags-grep-auto)
 
-(defun my/ggtags-find-reference-auto ()
-  "Run ggtags-find-reference for the symbol at point without prompting."
-  (interactive)
-  (let ((symbol (thing-at-point 'symbol t)))
-    (if symbol
-        (ggtags-find-reference symbol)
-      (call-interactively #'ggtags-find-reference))))  ;; Prompt only when there is no symbol at point
-(global-set-key (kbd "C-c M-r") #'my/ggtags-find-reference-auto)
+(global-set-key (kbd "M-'") #'helm-grep-do-git-grep)
 
 ;;################################ Package Installing ################################
 (require 'package)
@@ -475,15 +468,18 @@ When inside tmux, wrap with DCS so it reaches the outer terminal."
       (when (eq 0 (call-process "xclip" nil t nil "-out" "-selection" "clipboard"))
 	(buffer-string)))))
 
-;; In terminal Emacs under VNC/X11, prefer xclip so tmux can paste with Prefix+P.
-;; Fallback to OSC52 for terminal chains where xclip is unavailable.
+;; In terminal Emacs, use OSC52 inside tmux so copies reach the outer terminal.
+;; Outside tmux, prefer xclip when DISPLAY is available, otherwise OSC52.
 (if (and (not (display-graphic-p))
-	 (getenv "DISPLAY")
-	 (executable-find "xclip"))
-    (progn
-      (setq interprogram-cut-function #'my/xclip-copy)
-      (setq interprogram-paste-function #'my/xclip-paste))
-  (setq interprogram-cut-function #'my/osc52-copy))
+	 (my--in-tmux-p))
+    (setq interprogram-cut-function #'my/osc52-copy)
+  (if (and (not (display-graphic-p))
+	   (getenv "DISPLAY")
+	   (executable-find "xclip"))
+      (progn
+        (setq interprogram-cut-function #'my/xclip-copy)
+        (setq interprogram-paste-function #'my/xclip-paste))
+    (setq interprogram-cut-function #'my/osc52-copy)))
 
 ;;; --- Smart yank: try clipboard paste, fallback to kill-ring ----------------
 
@@ -910,7 +906,7 @@ So it's safe even if you haven't installed some *-ts-mode packages
   :defer t)
 
 (use-package ggtags
-  :hook ((c-mode c++-mode asm-mode python-mode java-mode shell-mode bitbake-mode makefile-mode makefile-gmake-mode dts-mode vhdl-mode eshell-mode) . ggtags-mode)
+  :hook ((c-mode c-ts-mode c++-mode c++-ts-mode asm-mode python-mode java-mode shell-mode bitbake-mode makefile-mode makefile-gmake-mode dts-mode vhdl-mode eshell-mode) . ggtags-mode)
   :config
     (setq ggtags-enable-navigation-keys nil)
     (define-key ggtags-mode-map (kbd "C-]") #'ggtags-find-tag-dwim)
@@ -932,13 +928,14 @@ So it's safe even if you haven't installed some *-ts-mode packages
 
 (use-package eglot
   :defer t
-  :hook ((python-mode . eglot-ensure)
-	 (c-mode      . eglot-ensure)
-	 (c-ts-mode   . eglot-ensure)
-	 (c++-mode    . eglot-ensure)
-	 (c++-ts-mode . eglot-ensure)
-	 (rust-mode   . eglot-ensure)
-	 (rust-ts-mode . eglot-ensure))
+  :hook ((python-mode    . eglot-ensure)
+	 (python-ts-mode . eglot-ensure)
+	 (c-mode         . eglot-ensure)
+	 (c-ts-mode      . eglot-ensure)
+	 (c++-mode       . eglot-ensure)
+	 (c++-ts-mode    . eglot-ensure)
+	 (rust-mode      . eglot-ensure)
+	 (rust-ts-mode   . eglot-ensure))
   :custom
   ;; Optional quality-of-life tweaks
   (eglot-autoshutdown t)
@@ -947,6 +944,11 @@ So it's safe even if you haven't installed some *-ts-mode packages
   ;; you can enable it if you use .clangd for clangd format
   (eglot-ignored-server-capabilities '(:documentOnTypeFormattingProvider))
   :config
+  ;; Be explicit for C/C++ so the server choice is unambiguous.
+  ;; Use a small wrapper that prefers a nearby compile_commands.json.
+  (add-to-list 'eglot-server-programs
+               '((c-mode c-ts-mode c++-mode c++-ts-mode objc-mode objc-ts-mode)
+                 . ("/home3/jacobahn/.local/bin/clangd-eglot")))
   ;; Prefer tree-sitter highlighting when available
   (when (and (fboundp 'treesit-hl-toggle)
 	     (fboundp 'treesit-available-p)
@@ -1086,8 +1088,31 @@ So it's safe even if you haven't installed some *-ts-mode packages
 ;;; emacs notion
 ;(require 'org-triage-ai)
 ;(load "~/.emacs.d/lisp/org-workspace-suite.el")
-(load "~/.emacs.d/lisp/enotion/workspace-status.el")
-(load "~/.emacs.d/lisp/enotion/treemacs-workflows.el")
+(let ((f (expand-file-name "~/.emacs.d/lisp/enotion/workspace-status.el")))
+  (when (file-readable-p f)
+    (load f nil t)))
+(let ((f (expand-file-name "~/.emacs.d/lisp/enotion/treemacs-workflows.el")))
+  (when (file-readable-p f)
+    (load f nil t)))
+
+(use-package corfu
+	       :ensure t
+	         :custom
+		   (corfu-auto t)
+		     (corfu-auto-prefix 2)
+		       (corfu-auto-delay 0.1)
+		         :init
+			   (global-corfu-mode 1))
+
+(use-package cape
+	       :ensure t
+	         :init
+		   (add-to-list 'completion-at-point-functions #'cape-file))
+
+(defun my-org-file-completion ()
+    (add-hook 'completion-at-point-functions #'cape-file nil t))
+
+(add-hook 'org-mode-hook #'my-org-file-completion)
 
 (load-theme 'goldenrod t)
 

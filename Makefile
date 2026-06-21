@@ -1,7 +1,7 @@
 CWD = $(shell pwd)
 
 include env.mk
-all: tmux emacs
+all: tmux hermes vnc emacs
 
 anaconda:
 	wget -O anaconda.sh "${ANACONDA_URL}"; bash anaconda.sh; rm anaconda.sh
@@ -14,7 +14,7 @@ codex:
 	nvm use 24
 	npm i -g @openai/codex@latest
 emacs-dep:
-	sudo apt-get install build-essential texinfo libx11-dev libxpm-dev libjpeg-dev libpng-dev libgif-dev libtiff-dev libgtk2.0-dev libncurses-dev libtinfo-dev mailutils libgnutls28-dev bear git autoconf texinfo libgnutls28-dev libxml2-dev libncurses5-dev libjansson-dev software-properties-common snapd python3-pip cmake libvterm-dev xclip python3-venv universal-ctags graphviz sqlite3 libsqlite3-0 libsqlite3-dev tmux libxpm-dev libgif-dev libgnutls28-dev 
+	sudo apt-get install build-essential texinfo libx11-dev libxpm-dev libjpeg-dev libpng-dev libgif-dev libtiff-dev libgtk2.0-dev libncurses-dev libtinfo-dev mailutils libgnutls28-dev bear git autoconf texinfo libgnutls28-dev libxml2-dev libncurses5-dev libjansson-dev software-properties-common snapd python3-pip cmake libvterm-dev xclip python3-venv universal-ctags graphviz sqlite3 libsqlite3-0 libsqlite3-dev tmux libxpm-dev libgif-dev libgnutls28-dev
 	python3 -m venv ~/.venv
 	echo "source ~/.venv/bin/activate" >> ~/.bashrc
 	. ~/.bashrc
@@ -67,7 +67,22 @@ emacs-dep:
 	sed -i "s/:tc=native:/:tc=native:tc=pygments:/" ~/.globalrc
 	sed -i '/:gtags_parser=C#\\:$pygmentslib:\\/i \\t:gtags_parser=Bitbake\\:$pygmentslib:\\' ~/.globalrc
 	sed -i '/:langmap=C#\\:.cs:\\/i \\t:langmap=Bitbake\\:.bb.bbappend.bbclass.conf.inc:\\' ~/.globalrc
+hermes:
+	echo "NO_COLOR=" >> ~/.bashrc
+vnc:
+	mkdir -p ~/.vnc
+	cp .vnc/* ~/.vnc/
 
+wezterm:
+	curl -fsSL https://apt.fury.io/wez/gpg.key | \
+	sudo gpg --yes --dearmor -o /usr/share/keyrings/wezterm-fury.gpg
+
+	echo "deb [signed-by=/usr/share/keyrings/wezterm-fury.gpg] \
+	https://apt.fury.io/wez/ * *" | \
+	sudo tee /etc/apt/sources.list.d/wezterm.list
+
+	sudo apt update
+	sudo apt-get install wezterm
 tmux:
 	sudo apt-get install xclip xsel
 	mkdir -p ~/.tmux

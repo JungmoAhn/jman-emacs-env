@@ -1,0 +1,29 @@
+#!/bin/bash
+exec > /tmp/vnc-xstartup.log 2>&1
+set -x
+
+unset SESSION_MANAGER
+unset DBUS_SESSION_BUS_ADDRESS
+
+export XDG_SESSION_TYPE=x11
+export LIBGL_ALWAYS_SOFTWARE=1
+export XDG_SESSION_CLASS=user
+export XDG_SESSION_DESKTOP=ubuntu
+export XDG_CURRENT_DESKTOP=GNOME
+export GNOME_SHELL_SESSION_MODE=ubuntu
+
+if [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
+  eval "$(dbus-launch --sh-syntax)"
+  export DBUS_SESSION_BUS_ADDRESS
+fi
+
+xsetroot -solid grey &
+
+# TigerVNC clipboard bridge (VNC <-> desktop clipboard)
+vncconfig -nowin &
+autocutsel -fork
+autocutsel -selection PRIMARY -fork
+
+# Start GNOME services, then keep shell in foreground so xstartup stays alive
+gnome-session --session=ubuntu --systemd-service=no &
+exec gnome-shell --x11
