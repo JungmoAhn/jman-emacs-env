@@ -234,28 +234,19 @@ Shell| Shell| Org"
 ;; (define-key global-map (kbd "C-w s i b") 'show-ifdef-block)
 ;; (define-key global-map (kbd "C-w h b") 'hs-hide-block)
 ;; (define-key global-map (kbd "C-w s b") 'hs-show-block)
-(global-set-key (kbd "C-c 1") #'treemacs-select-window)
-(global-set-key (kbd "C-c 2") #'treemacs-switch-workspace)
-(global-set-key (kbd "C-c 3") #'treemacs-edit-workspaces)
 (global-set-key (kbd "C-c w") #'workspace-status)
 (global-set-key (kbd "C-c 0") #'magit-show-refs)
 (global-set-key (kbd "C-c f") #'project-find-file)
 
 ;(define-key global-map (kbd "C-q p s") 'project-eshell)
 
-(define-key global-map (kbd "C-q o") 'projectile-switch-open-project)
-(define-key global-map (kbd "C-q s w") 'treemacs-switch-workspace)
-(define-key global-map (kbd "C-q s p") 'treemacs-select-window)
-(define-key global-map (kbd "C-q c w") 'treemacs-create-workspace)
-(define-key global-map (kbd "C-q r w") 'treemacs-remove-workspace)
-(define-key global-map (kbd "C-q c p") 'treemacs-peek)
-(define-key global-map (kbd "C-q a p") 'treemacs-add-project-to-workspace)
-(define-key global-map (kbd "C-q r p") 'treemacs-remove-project-from-workspace)
-(define-key global-map (kbd "C-q n p") 'treemacs-next-project)
-(define-key global-map (kbd "C-q p p") 'treemacs-previous-project)
 
-(define-key global-map (kbd "C-q R p") 'projectil-remove-known-project)
-(define-key global-map (kbd "C-q S p") 'counsel-projectile-switch-project)
+(define-key global-map (kbd "C-q t s") 'treemacs-switch-workspace)
+(define-key global-map (kbd "C-q t o") 'treemacs-select-window)
+(define-key global-map (kbd "C-q t e") 'treemacs-edit-workspaces)
+(define-key global-map (kbd "C-q p o") 'projectile-switch-open-project)
+(define-key global-map (kbd "C-q p r") 'projectil-remove-known-project)
+(define-key global-map (kbd "C-q p s") 'counsel-projectile-switch-project)
 
 ;; manage a  current workspace
 (define-key global-map (kbd "C-q a f") 'lsp-workspace-folders-add)
@@ -388,6 +379,8 @@ Otherwise, run it from the Git root."
       (message "helm-grep-do-git-grep @ %s" default-directory)
       (call-interactively #'helm-grep-do-git-grep))))
 
+
+
 (defun my/ggtags-grep-auto ()
   "Run ggtags-grep for the symbol at point without prompting."
   (interactive)
@@ -448,6 +441,41 @@ When inside tmux, wrap with DCS so it reaches the outer terminal."
                       osc52)))
 	      (send-string-to-terminal seq))))
 
+(defun my/tmux-load-buffer (text)
+  "Load TEXT into the current tmux buffer.
+
+Try the active tmux server even when TMUX is unset so GUI Emacs or a
+reused daemon can still mirror copies into tmux."
+  (when (and text
+             (not (string-empty-p text))
+             (executable-find "tmux"))
+    (let ((process-connection-type nil))
+      (with-temp-buffer
+        (insert text)
+        (ignore-errors
+          (call-process-region (point-min) (point-max)
+                               "tmux" nil nil nil
+                               "load-buffer" "-"))))))
+
+(defun my/tmux-mirror-selection (&rest _args)
+  "Mirror the current selection/kill text into tmux."
+  (ignore-errors
+    (my/tmux-load-buffer (current-kill 0 t))))
+
+(defun my/tmux-mirror-region (&rest _args)
+  "Mirror the active region into tmux after Emacs copies or cuts it."
+  (when (use-region-p)
+    (ignore-errors
+      (my/tmux-load-buffer
+       (buffer-substring-no-properties (region-beginning) (region-end))))))
+
+(dolist (fn '(kill-ring-save kill-region clipboard-kill-ring-save))
+  (when (fboundp fn)
+    (advice-add fn :after #'my/tmux-mirror-region)))
+
+(dolist (fn '(kill-new gui-set-selection x-select-text))
+  (when (fboundp fn)
+    (advice-add fn :after #'my/tmux-mirror-selection)))
 (defun my/xclip-copy (text &optional _push)
   "Copy TEXT to X11 clipboard via xclip."
   (when (and text (not (string-empty-p text)) (executable-find "xclip"))
@@ -466,18 +494,16 @@ When inside tmux, wrap with DCS so it reaches the outer terminal."
       (when (eq 0 (call-process "xclip" nil t nil "-out" "-selection" "clipboard"))
 	(buffer-string)))))
 
-;; In terminal Emacs, use OSC52 inside tmux so copies reach the outer terminal.
-;; Outside tmux, prefer xclip when DISPLAY is available, otherwise OSC52.
+;; In terminal Emacs, prefer xclip when DISPLAY is available so copy/paste
+;; works symmetrically across tmux sessions that share the same clipboard.
+;; Fall back to OSC52 only when no X11/clipboard target is available.
 (if (and (not (display-graphic-p))
-	 (my--in-tmux-p))
-    (setq interprogram-cut-function #'my/osc52-copy)
-  (if (and (not (display-graphic-p))
-	   (getenv "DISPLAY")
-	   (executable-find "xclip"))
-      (progn
-        (setq interprogram-cut-function #'my/xclip-copy)
-        (setq interprogram-paste-function #'my/xclip-paste))
-    (setq interprogram-cut-function #'my/osc52-copy)))
+	 (getenv "DISPLAY")
+	 (executable-find "xclip"))
+    (progn
+      (setq interprogram-cut-function #'my/xclip-copy)
+      (setq interprogram-paste-function #'my/xclip-paste))
+  (setq interprogram-cut-function #'my/osc52-copy))
 
 ;;; --- Smart yank: try clipboard paste, fallback to kill-ring ----------------
 
@@ -907,7 +933,7 @@ So it's safe even if you haven't installed some *-ts-mode packages
   :hook ((c-mode c-ts-mode c++-mode c++-ts-mode asm-mode python-mode java-mode shell-mode bitbake-mode makefile-mode makefile-gmake-mode dts-mode vhdl-mode eshell-mode) . ggtags-mode)
   :config
     (setq ggtags-enable-navigation-keys nil)
-    (define-key ggtags-mode-map (kbd "C-]") #'ggtags-find-tag-dwim)
+    (define-key ggtags-mode-map (kbd "M-]") #'ggtags-find-definition)
     (define-key ggtags-mode-map (kbd "M-.") #'xref-find-definitions)
 )
 
@@ -942,11 +968,7 @@ So it's safe even if you haven't installed some *-ts-mode packages
   ;; you can enable it if you use .clangd for clangd format
   (eglot-ignored-server-capabilities '(:documentOnTypeFormattingProvider))
   :config
-  ;; Be explicit for C/C++ so the server choice is unambiguous.
-  ;; Use a small wrapper that prefers a nearby compile_commands.json.
-  (add-to-list 'eglot-server-programs
-               '((c-mode c-ts-mode c++-mode c++-ts-mode objc-mode objc-ts-mode)
-                 . ("/home3/jacobahn/.local/bin/clangd-eglot")))
+
   ;; Prefer tree-sitter highlighting when available
   (when (and (fboundp 'treesit-hl-toggle)
 	     (fboundp 'treesit-available-p)
@@ -1114,6 +1136,8 @@ So it's safe even if you haven't installed some *-ts-mode packages
 
 (load-theme 'goldenrod t)
 
+(global-set-key (kbd "M-]") #'ggtags-find-definition)
+
 (when (fboundp 'jacob/gptel-dashboard-startup)
   (add-hook 'emacs-startup-hook #'jacob/gptel-dashboard-startup))
 (custom-set-variables
@@ -1121,15 +1145,13 @@ So it's safe even if you haven't installed some *-ts-mode packages
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(package-selected-packages nil)
  '(package-vc-selected-packages
    '((claude-code-ide :url
 		      "https://github.com/manzaltu/claude-code-ide.el")
      (claude-code :url
 		  "https://github.com/stevemolitor/claude-code.el")
      (monet :url "https://github.com/stevemolitor/monet"))))
-
-(global-set-key (kbd "M-]") #'ggtags-find-definition)
-
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
