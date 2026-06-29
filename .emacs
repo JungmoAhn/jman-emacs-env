@@ -473,19 +473,37 @@ reused daemon can still mirror copies into tmux."
   (when (fboundp fn)
     (advice-add fn :after #'my/tmux-mirror-region)))
 
-;; Avoid advising `kill-new' directly: it can recurse through selection
-;; plumbing in some Emacs builds/sessions and block clipboard copies.
-;; Mirroring the actual copy/cut entry points is enough.
+;; Do not advise `kill-new' directly: some Emacs sessions recurse or stall
+;; through selection plumbing. Mirror the real copy/cut entry points instead.
+
+(defun my/vnc-active-displays ()
+  "Return a list of active Xtigervnc display strings like \":3\"."
+  (let* ((cmd "pgrep -a Xtigervnc 2>/dev/null | awk '{for (i=1; i<=NF; i++) if ($i ~ /^:[0-9]+$/) print $i}' | sort -u")
+         (out (string-trim (shell-command-to-string cmd))))
+    (if (string-empty-p out)
+        (when (getenv "DISPLAY")
+          (list (getenv "DISPLAY")))
+      (split-string out "\n" t)))
 
 (defun my/xclip-copy (text &optional _push)
-  "Copy TEXT to X11 clipboard via xclip."
+  "Copy TEXT to X11 clipboard via xclip.
+
+Update both CLIPBOARD and PRIMARY on every active TigerVNC display so
+all VNC sessions stay in sync."
   (when (and text (not (string-empty-p text)) (executable-find "xclip"))
-    (let ((process-connection-type nil))
-      (with-temp-buffer
-	(insert text)
-	(call-process-region (point-min) (point-max)
-			     "xclip" nil nil nil
-			     "-in" "-selection" "clipboard")))))
+    (let ((process-connection-type nil)
+          (displays (my/vnc-active-displays)))
+      (dolist (display displays)
+        (let ((process-environment (cons (concat "DISPLAY=" display)
+                                         process-environment)))
+          (with-temp-buffer
+            (insert text)
+            (call-process-region (point-min) (point-max)
+                                 "xclip" nil nil nil
+                                 "-in" "-selection" "clipboard")
+            (call-process-region (point-min) (point-max)
+                                 "xclip" nil nil nil
+                                 "-in" "-selection" "primary")))))))
 
 (defun my/xclip-paste ()
   "Paste text from X11 clipboard via xclip."
