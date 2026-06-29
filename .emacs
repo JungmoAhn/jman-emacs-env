@@ -473,9 +473,10 @@ reused daemon can still mirror copies into tmux."
   (when (fboundp fn)
     (advice-add fn :after #'my/tmux-mirror-region)))
 
-(dolist (fn '(kill-new gui-set-selection x-select-text))
-  (when (fboundp fn)
-    (advice-add fn :after #'my/tmux-mirror-selection)))
+;; Avoid advising `kill-new' directly: it can recurse through selection
+;; plumbing in some Emacs builds/sessions and block clipboard copies.
+;; Mirroring the actual copy/cut entry points is enough.
+
 (defun my/xclip-copy (text &optional _push)
   "Copy TEXT to X11 clipboard via xclip."
   (when (and text (not (string-empty-p text)) (executable-find "xclip"))
